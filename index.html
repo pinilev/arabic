@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד אוצר מילים: עברית - ערבית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        .perspective {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-teal-700 text-white shadow-md p-4 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-teal-800 p-2 rounded-lg">
+                    <i class="fas fa-book-open text-2xl text-teal-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">אוצר מילים: עברית - ערבית</h1>
+                    <p class="text-xs text-teal-200">ערבית מדוברת - תרגול ושינון</p>
+                </div>
+            </div>
+            <div class="flex bg-teal-800/60 p-1 rounded-xl gap-1 border border-teal-600/50">
+                <button id="mode-flashcards" class="bg-white text-teal-900 font-semibold px-4 py-1.5 rounded-lg text-sm transition shadow">
+                    <i class="fas fa-clone ml-1"></i> כרטיסיות
+                </button>
+                <button id="mode-quiz" class="hover:bg-teal-700/60 text-white font-medium px-4 py-1.5 rounded-lg text-sm transition">
+                    <i class="fas fa-vial ml-1"></i> מבחן
+                </button>
+                <button id="mode-list" class="hover:bg-teal-700/60 text-white font-medium px-4 py-1.5 rounded-lg text-sm transition">
+                    <i class="fas fa-list ml-1"></i> רשימה
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 w-full flex-grow">
+
+        <!-- Controls / Search Bar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
+            <div class="relative w-full sm:w-auto sm:flex-1">
+                <i class="fas fa-search absolute right-3 top-3 text-slate-400"></i>
+                <input type="text" id="search-input" placeholder="חפש מילה בעברית או בערבית..." 
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pr-10 pl-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <label for="category-select" class="text-xs font-semibold text-slate-500 whitespace-nowrap">נושא:</label>
+                <select id="category-select" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                    <option value="all">כל הנושאים</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Flashcards Section -->
+        <section id="section-flashcards" class="flex flex-col items-center">
+            <!-- Counter & Status -->
+            <div class="mb-3 text-xs font-semibold text-slate-500 bg-slate-200/60 px-3 py-1 rounded-full flex items-center gap-2">
+                <span id="card-counter">0 / 0</span>
+                <span>•</span>
+                <span id="card-category-badge" class="text-teal-700">הכל</span>
+            </div>
+
+            <!-- Card Container -->
+            <div class="w-full max-w-sm sm:max-w-md h-80 perspective cursor-pointer mb-6" id="card-container">
+                <div id="card" class="w-full h-full relative transform-style-3d transition-transform duration-500 shadow-lg rounded-3xl bg-white border border-slate-100">
+                    
+                    <!-- Front Side (Hebrew) -->
+                    <div class="absolute inset-0 backface-hidden flex flex-col justify-between p-8 rounded-3xl bg-gradient-to-b from-white to-teal-50/30 text-center border-2 border-teal-500/20">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span class="bg-teal-50 text-teal-700 font-medium px-2.5 py-1 rounded-lg" id="card-cat-front">קטגוריה</span>
+                            <span class="text-slate-400"><i class="fas fa-globe ml-1"></i>עברית</span>
+                        </div>
+                        <div class="my-auto">
+                            <h2 id="card-hebrew" class="text-3xl sm:text-4xl font-bold text-slate-800">מילה</h2>
+                        </div>
+                        <div class="text-xs text-slate-400 flex items-center justify-center gap-1">
+                            <i class="fas fa-redo text-teal-600"></i>
+                            <span>לחץ להיפוך הכרטיס</span>
+                        </div>
+                    </div>
+
+                    <!-- Back Side (Arabic Transliteration) -->
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col justify-between p-8 rounded-3xl bg-teal-800 text-white text-center shadow-inner">
+                        <div class="flex justify-between items-center text-xs text-teal-200">
+                            <span class="bg-teal-900/60 text-teal-200 font-medium px-2.5 py-1 rounded-lg" id="card-cat-back">קטגוריה</span>
+                            <span>ערבית (תעתיק)</span>
+                        </div>
+                        <div class="my-auto">
+                            <h2 id="card-arabic" class="text-4xl sm:text-5xl font-extrabold text-amber-300 tracking-wide">תעתיק</h2>
+                        </div>
+                        <div class="text-xs text-teal-300/80 flex items-center justify-center gap-1">
+                            <i class="fas fa-redo"></i>
+                            <span>לחץ לחזרה לעברית</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Controls Buttons -->
+            <div class="flex items-center gap-4 mb-4">
+                <button id="prev-btn" class="bg-white hover:bg-slate-100 text-slate-700 w-12 h-12 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center transition active:scale-95">
+                    <i class="fas fa-chevron-right text-lg"></i>
+                </button>
+                <button id="random-btn" class="bg-teal-50 hover:bg-teal-100 text-teal-800 font-semibold px-4 py-2.5 rounded-2xl shadow-sm border border-teal-200 transition text-sm flex items-center gap-2 active:scale-95">
+                    <i class="fas fa-shuffle"></i>
+                    <span>ערבב מילים</span>
+                </button>
+                <button id="next-btn" class="bg-white hover:bg-slate-100 text-slate-700 w-12 h-12 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center transition active:scale-95">
+                    <i class="fas fa-chevron-left text-lg"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="section-quiz" class="hidden flex flex-col items-center">
+            <div class="w-full max-w-lg bg-white rounded-3xl shadow-md border border-slate-200 p-6 sm:p-8">
+                
+                <!-- Header Status -->
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                    <span id="quiz-progress" class="text-xs font-bold text-slate-400">שאלה 1 מתוך 10</span>
+                    <span id="quiz-score" class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">ניקוד: 0</span>
+                </div>
+
+                <!-- Question -->
+                <div class="text-center mb-6">
+                    <span class="text-xs text-slate-400 font-medium">איך אומרים בערבית:</span>
+                    <h2 id="quiz-question" class="text-3xl font-extrabold text-slate-800 mt-1">מילה</h2>
+                </div>
+
+                <!-- Answer Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6">
+                    <!-- Options injected here -->
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="quiz-feedback" class="text-center font-bold text-sm min-h-[24px] mb-4"></div>
+
+                <!-- Next Question Button -->
+                <button id="quiz-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow-md transition hidden">
+                    לשאלה הבאה <i class="fas fa-arrow-left mr-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- List View Section -->
+        <section id="section-list" class="hidden">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="max-h-[550px] overflow-y-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold sticky top-0 border-b border-slate-200">
+                            <tr>
+                                <th class="p-3.5">עברית</th>
+                                <th class="p-3.5">ערבית (תעתיק)</th>
+                                <th class="p-3.5">נושא</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vocab-table-body" class="divide-y divide-slate-100">
+                            <!-- Rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 border-t border-slate-200 p-3 text-center text-xs text-slate-500">
+        ערכה ללימוד ערבית מדוברת • מבוסס על מילון המילים
+    </footer>
+
+    <script>
+        // Full Vocabulary Database compiled from document
+        const vocabulary = [
+            // מילות תואר
+            { hebrew: "בחוץ", arabic: "ברא", category: "מילות תואר" },
+            { hebrew: "בפנים", arabic: "ג'נא", category: "מילות תואר" },
+            { hebrew: "גדול", arabic: "כביר / ח'תיאר", category: "מילות תואר" },
+            { hebrew: "חולה", arabic: "מריד / עיאן", category: "מילות תואר" },
+            { hebrew: "חדש", arabic: "ג'דיד", category: "מילות תואר" },
+            { hebrew: "חזק", arabic: "קוי", category: "מילות תואר" },
+            { hebrew: "חלש", arabic: "דעיף", category: "מילות תואר" },
+            { hebrew: "טוב / בסדר", arabic: "מאשי / כויס", category: "מילות תואר" },
+            { hebrew: "יותר טוב / מוטב", arabic: "אחסן", category: "מילות תואר" },
+            { hebrew: "מהר", arabic: "קואם / בסרעה", category: "מילות תואר" },
+            { hebrew: "יפה", arabic: "חלו", category: "מילות תואר" },
+            { hebrew: "מסכן / עני", arabic: "מסכין", category: "מילות תואר" },
+            { hebrew: "מרוצה / מרגיש טוב", arabic: "מבסוט", category: "מילות תואר" },
+            { hebrew: "נמוך", arabic: "קציר", category: "מילות תואר" },
+            { hebrew: "עייף", arabic: "תעבאן", category: "מילות תואר" },
+            { hebrew: "עסוק", arabic: "משע'ול", category: "מילות תואר" },
+            { hebrew: "פיקח / זריז", arabic: "שאטר", category: "מילות תואר" },
+            { hebrew: "קטן", arabic: "זע'יר / צע'יר", category: "מילות תואר" },
+            { hebrew: "קל", arabic: "הין", category: "מילות תואר" },
+            { hebrew: "קצת / מעט", arabic: "שוי / קליל", category: "מילות תואר" },
+            { hebrew: "קר", arabic: "ברד", category: "מילות תואר" },
+            { hebrew: "קשה", arabic: "צעב", category: "מילות תואר" },
+            { hebrew: "רעב", arabic: "ג'ועאן", category: "מילות תואר" },
+            { hebrew: "שמח", arabic: "סעיד", category: "מילות תואר" },
+
+            // משפחה
+            { hebrew: "אבא / אבי", arabic: "באבא / אבוי", category: "משפחה" },
+            { hebrew: "את", arabic: "אה", category: "משפחה" },
+            { hebrew: "אחות / אחיות", arabic: "אח'ת / ח'ואת", category: "משפחה" },
+            { hebrew: "אחים", arabic: "אח'וה", category: "משפחה" },
+            { hebrew: "אמא / אימי", arabic: "מאמא / אם / אימי", category: "משפחה" },
+            { hebrew: "בן", arabic: "אבן", category: "משפחה" },
+            { hebrew: "בעל", arabic: "ג'וז", category: "משפחה" },
+            { hebrew: "דוד (מצד האב)", arabic: "עם", category: "משפחה" },
+            { hebrew: "דוד (מצד האם)", arabic: "ח'אל", category: "משפחה" },
+            { hebrew: "הורים / משפחה", arabic: "אהל / עילה", category: "משפחה" },
+
+            // פעלים
+            { hebrew: "אכל", arabic: "אכל", category: "פעלים" },
+            { hebrew: "אמר", arabic: "קאל", category: "פעלים" },
+            { hebrew: "בוא", arabic: "תעאל", category: "פעלים" },
+            { hebrew: "ביקר", arabic: "זאר", category: "פעלים" },
+            { hebrew: "ביקש", arabic: "טלב", category: "פעלים" },
+            { hebrew: "בישל", arabic: "טבח", category: "פעלים" },
+            { hebrew: "גר / גרה", arabic: "סאכן / סאכנה", category: "פעלים" },
+            { hebrew: "הביא", arabic: "ג'אב", category: "פעלים" },
+            { hebrew: "הבין", arabic: "פהם", category: "פעלים" },
+            { hebrew: "הזיז", arabic: "זאח", category: "פעלים" },
+            { hebrew: "היה", arabic: "כאן", category: "פעלים" },
+            { hebrew: "היכה / הרביץ", arabic: "דרב", category: "פעלים" },
+            { hebrew: "הלך", arabic: "ראח", category: "פעלים" },
+            { hebrew: "הלך הביתה", arabic: "רוח", category: "פעלים" },
+            { hebrew: "הרג", arabic: "קתל", category: "פעלים" },
+            { hebrew: "ידע", arabic: "ערף", category: "פעלים" },
+            { hebrew: "יצא", arabic: "טלע", category: "פעלים" },
+            { hebrew: "לקח / קיבל", arabic: "אח'ד", category: "פעלים" },
+            { hebrew: "כתב", arabic: "כתב", category: "פעלים" },
+            { hebrew: "עבר", arabic: "מרק", category: "פעלים" },
+            { hebrew: "עזב / נטש", arabic: "תרכ", category: "פעלים" },
+            { hebrew: "פתח", arabic: "פתח", category: "פעלים" },
+            { hebrew: "קרה / נהיה", arabic: "צאר", category: "פעלים" },
+            { hebrew: "ראה", arabic: "שאפ", category: "פעלים" },
+            { hebrew: "שאל", arabic: "סאל", category: "פעלים" },
+            { hebrew: "שבר", arabic: "כסר", category: "פעלים" },
+            { hebrew: "שילם", arabic: "דפע", category: "פעלים" },
+            { hebrew: "שמע", arabic: "סמע", category: "פעלים" },
+            { hebrew: "שתה", arabic: "שרב", category: "פעלים" },
+            { hebrew: "שתק", arabic: "סכת", category: "פעלים" },
+
+            // ברכות / ביטויים
+            { hebrew: "תשובה לאהלן וסהלן", arabic: "אהלין בכ / אהלין", category: "ברכות / ביטויים" },
+            { hebrew: "השבח לאל", arabic: "אלחמדיללה", category: "ברכות / ביטויים" },
+            { hebrew: "אלוהים יברך אותך", arabic: "אללה יבארכ פיכ / אללה יופק", category: "ברכות / ביטויים" },
+            { hebrew: "אלוהים ינעים לך", arabic: "אללה ינעם עליכ", category: "ברכות / ביטויים" },
+            { hebrew: "תודה (תשובה לאיחול)", arabic: "אללה יסלמכ", category: "ברכות / ביטויים" },
+            { hebrew: "אלוהים ישמור", arabic: "אללה יסתר", category: "ברכות / ביטויים" },
+            { hebrew: "ברכת שלום", arabic: "אסלאם עליכם", category: "ברכות / ביטויים" },
+            { hebrew: "שנה טובה", arabic: "כל עאם ואנתו בח'יר", category: "ברכות / ביטויים" },
+            { hebrew: "פניה מנומסת (בבקשה)", arabic: "לו סמחת", category: "ברכות / ביטויים" },
+            { hebrew: "חס וחלילה", arabic: "מא סמח אללה", category: "ברכות / ביטויים" },
+            { hebrew: "להתראות", arabic: "מע סלאמה", category: "ברכות / ביטויים" },
+            { hebrew: "תשובה למרחבא", arabic: "מרחבתין / הלא / אהלין", category: "ברכות / ביטויים" },
+            { hebrew: "סלאמתכ (לבריאות)", arabic: "סלאמתכ", category: "ברכות / ביטויים" },
+            { hebrew: "נעים מאוד", arabic: "פרצה סעידה", category: "ברכות / ביטויים" },
+            { hebrew: "לכבוד הוא לי", arabic: "תשרפנא", category: "ברכות / ביטויים" },
+
+            // מילות יחס וקישור
+            { hebrew: "אבל / רק", arabic: "בס", category: "מילות יחס וקישור" },
+            { hebrew: "או", arabic: "ואל", category: "מילות יחס וקישור" },
+            { hebrew: "אולי / אין", arabic: "ימכן / ביג'וז / מא פיה", category: "מילות יחס וקישור" },
+            { hebrew: "אלה / האלה", arabic: "הדול", category: "מילות יחס וקישור" },
+            { hebrew: "אם", arabic: "אזא", category: "מילות יחס וקישור" },
+            { hebrew: "אף אחד", arabic: "ולא חדא / מא חדא", category: "מילות יחס וקישור" },
+            { hebrew: "אפשר", arabic: "ממכן", category: "מילות יחס וקישור" },
+            { hebrew: "אצל", arabic: "ענד", category: "מילות יחס וקישור" },
+            { hebrew: "אשר / ש...", arabic: "אלי", category: "מילות יחס וקישור" },
+            { hebrew: "באמת", arabic: "ען-ג'ד", category: "מילות יחס וקישור" },
+            { hebrew: "בבקשה", arabic: "תפדל", category: "מילות יחס וקישור" },
+            { hebrew: "בגלל", arabic: "עשאן / מנשאן", category: "מילות יחס וקישור" },
+            { hebrew: "בלי", arabic: "בדון", category: "מילות יחס וקישור" },
+            { hebrew: "בעצמי / בעצמך", arabic: "לחאלי / לחאלכ", category: "מילות יחס וקישור" },
+            { hebrew: "גם / עוד", arabic: "כמאן", category: "מילות יחס וקישור" },
+            { hebrew: "אחרי", arabic: "בעד", category: "מילות יחס וקישור" },
+            { hebrew: "אחר-כך", arabic: "בעדין", category: "מילות יחס וקישור" },
+            { hebrew: "אף פעם", arabic: "ולא מרה", category: "מילות יחס וקישור" },
+            { hebrew: "אתמול", arabic: "מבירח", category: "מילות יחס וקישור" },
+            { hebrew: "דווקא כן", arabic: "אמבלא", category: "מילות יחס וקישור" },
+            { hebrew: "הזה / הזאת / האלה", arabic: "הל", category: "מילות יחס וקישור" },
+            { hebrew: "הרבה", arabic: "כתיר", category: "מילות יחס וקישור" },
+            { hebrew: "זאת אומרת", arabic: "יעני", category: "מילות יחס וקישור" },
+            { hebrew: "זאת / הזאת", arabic: "האי / האדי", category: "מילות יחס וקישור" },
+            { hebrew: "זה / הזה", arabic: "האדא", category: "מילות יחס וקישור" },
+            { hebrew: "יותר", arabic: "אכתר", category: "מילות יחס וקישור" },
+            { hebrew: "יש / כאן", arabic: "פיה / הון", category: "מילות יחס וקישור" },
+            { hebrew: "כדי ש...", arabic: "חתא", category: "מילות יחס וקישור" },
+            { hebrew: "כי / מפני ש...", arabic: "ליאנו / אנו", category: "מילות יחס וקישור" },
+
+            // כללי
+            { hebrew: "אבטלה", arabic: "בטאלה", category: "כללי" },
+            { hebrew: "אדם / אנשים", arabic: "שחץ / אשחאצ", category: "כללי" },
+            { hebrew: "אוטובוס / אופניים", arabic: "באץ / בסכלית", category: "כללי" },
+            { hebrew: "אורחים", arabic: "דיוף", category: "כללי" },
+            { hebrew: "אי אפשר", arabic: "מש ממכן", category: "כללי" },
+            { hebrew: "אסור", arabic: "ממנוע", category: "כללי" },
+            { hebrew: "אשה", arabic: "מרה", category: "כללי" },
+            { hebrew: "בדרך כלל", arabic: "עאדתן", category: "כללי" },
+            { hebrew: "בוודאי / בטח", arabic: "מעלום / אכיד", category: "כללי" },
+            { hebrew: "בית", arabic: "בית / דאר", category: "כללי" },
+            { hebrew: "בית חולים", arabic: "מסתשפא", category: "כללי" },
+            { hebrew: "בית ספר", arabic: "מדרסה", category: "כללי" },
+            { hebrew: "בעל הבית", arabic: "צאחב-אל-בית", category: "כללי" },
+            { hebrew: "בקבוק", arabic: "קנינה", category: "כללי" },
+            { hebrew: "גפרורים", arabic: "כברית", category: "כללי" },
+            { hebrew: "דבר", arabic: "אשי", category: "כללי" },
+            { hebrew: "דלת", arabic: "באב", category: "כללי" },
+            { hebrew: "וילון", arabic: "ברדאי", category: "כללי" },
+            { hebrew: "זול", arabic: "רח'יצ", category: "כללי" },
+            { hebrew: "חדר", arabic: "אודה / ע'רפה", category: "כללי" },
+            { hebrew: "חלון", arabic: "שבאכ", category: "כללי" },
+            { hebrew: "חנות", arabic: "דכאנה", category: "כללי" },
+            { hebrew: "חשוב", arabic: "מהם", category: "כללי" },
+            { hebrew: "יום הולדת", arabic: "עיד מילאד", category: "כללי" },
+            { hebrew: "ילד / ילדים", arabic: "ולד / ולאד", category: "כללי" },
+            { hebrew: "יקר", arabic: "ע'אלי", category: "כללי" },
+            { hebrew: "כחול", arabic: "אזרק", category: "כללי" },
+            { hebrew: "כסא", arabic: "כורסי", category: "כללי" },
+            { hebrew: "כסף", arabic: "מצארי", category: "כללי" },
+            { hebrew: "כפר / ישוב", arabic: "בלד", category: "כללי" },
+            { hebrew: "מחברת", arabic: "דפתר", category: "כללי" },
+            { hebrew: "מיץ", arabic: "עציר", category: "כללי" },
+            { hebrew: "משפט", arabic: "ג'מלה", category: "כללי" },
+            { hebrew: "ספר / ספרים", arabic: "כתאב / כתב", category: "כללי" },
+            { hebrew: "עבודה", arabic: "שע'ל", category: "כללי" },
+            { hebrew: "עיתון", arabic: "ג'רידה", category: "כללי" },
+            { hebrew: "צבע / גוון", arabic: "לון", category: "כללי" },
+            { hebrew: "קפה", arabic: "קהוה", category: "כללי" },
+            { hebrew: "ראש", arabic: "ראס", category: "כללי" },
+            { hebrew: "רווק", arabic: "עזאבי", category: "כללי" },
+            { hebrew: "רופא", arabic: "דכתור", category: "כללי" },
+            { hebrew: "רעיון", arabic: "פכרה", category: "כללי" },
+            { hebrew: "שולחן", arabic: "טאולה", category: "כללי" },
+            { hebrew: "שום דבר", arabic: "ולא אשי", category: "כללי" },
+            { hebrew: "שכן / שכנים", arabic: "ג'אר / ג'יראן", category: "כללי" },
+            { hebrew: "שמש", arabic: "שמס", category: "כללי" },
+            { hebrew: "תה", arabic: "שאי", category: "כללי" },
+            { hebrew: "תחנה", arabic: "מחטה", category: "כללי" },
+            { hebrew: "תשובה", arabic: "ג'ואב", category: "כללי" },
+
+            // מילות שאלה
+            { hebrew: "איך", arabic: "כיף", category: "מילות שאלה" },
+            { hebrew: "איפה", arabic: "וין", category: "מילות שאלה" },
+            { hebrew: "כמה (ספיר)", arabic: "כם", category: "מילות שאלה" },
+            { hebrew: "כמה (לא ספיר)", arabic: "קדיש", category: "מילות שאלה" },
+            { hebrew: "למה", arabic: "ליש", category: "מילות שאלה" },
+            { hebrew: "מה", arabic: "שו / איש", category: "מילות שאלה" },
+            { hebrew: "מי", arabic: "מין", category: "מילות שאלה" },
+            { hebrew: "מתי", arabic: "אמתא", category: "מילות שאלה" }
+        ];
+
+        // State Variables
+        let filteredVocab = [...vocabulary];
+        let currentIndex = 0;
+        let quizScore = 0;
+        let quizCurrentIndex = 0;
+        let quizQuestions = [];
+
+        // DOM Elements
+        const categorySelect = document.getElementById('category-select');
+        const searchInput = document.getElementById('search-input');
+
+        const sectionFlashcards = document.getElementById('section-flashcards');
+        const sectionQuiz = document.getElementById('section-quiz');
+        const sectionList = document.getElementById('section-list');
+
+        const modeFlashcardsBtn = document.getElementById('mode-flashcards');
+        const modeQuizBtn = document.getElementById('mode-quiz');
+        const modeListBtn = document.getElementById('mode-list');
+
+        const cardContainer = document.getElementById('card-container');
+        const card = document.getElementById('card');
+        const cardHebrew = document.getElementById('card-hebrew');
+        const cardArabic = document.getElementById('card-arabic');
+        const cardCatFront = document.getElementById('card-cat-front');
+        const cardCatBack = document.getElementById('card-cat-back');
+        const cardCounter = document.getElementById('card-counter');
+        const cardCategoryBadge = document.getElementById('card-category-badge');
+        
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const randomBtn = document.getElementById('random-btn');
+
+        const vocabTableBody = document.getElementById('vocab-table-body');
+
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptions = document.getElementById('quiz-options');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const quizScoreEl = document.getElementById('quiz-score');
+        const quizProgressEl = document.getElementById('quiz-progress');
+        const quizNextBtn = document.getElementById('quiz-next-btn');
+
+        // Populate Categories
+        const categories = [...new Set(vocabulary.map(item => item.category))];
+        categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            categorySelect.appendChild(opt);
+        });
+
+        // Filter Logic
+        function applyFilters() {
+            const cat = categorySelect.value;
+            const search = searchInput.value.trim().toLowerCase();
+
+            filteredVocab = vocabulary.filter(item => {
+                const matchCat = (cat === 'all' || item.category === cat);
+                const matchSearch = item.hebrew.toLowerCase().includes(search) || item.arabic.toLowerCase().includes(search);
+                return matchCat && matchSearch;
+            });
+
+            currentIndex = 0;
+            updateFlashcard();
+            renderListTable();
+        }
+
+        categorySelect.addEventListener('change', applyFilters);
+        searchInput.addEventListener('input', applyFilters);
+
+        // Switch View Modes
+        function setMode(mode) {
+            sectionFlashcards.classList.add('hidden');
+            sectionQuiz.classList.add('hidden');
+            sectionList.classList.add('hidden');
+
+            const inactiveStyle = "hover:bg-teal-700/60 text-white font-medium px-4 py-1.5 rounded-lg text-sm transition";
+            const activeStyle = "bg-white text-teal-900 font-semibold px-4 py-1.5 rounded-lg text-sm transition shadow";
+
+            modeFlashcardsBtn.className = inactiveStyle;
+            modeQuizBtn.className = inactiveStyle;
+            modeListBtn.className = inactiveStyle;
+
+            if (mode === 'flashcards') {
+                sectionFlashcards.classList.remove('hidden');
+                modeFlashcardsBtn.className = activeStyle;
+            } else if (mode === 'quiz') {
+                sectionQuiz.classList.remove('hidden');
+                modeQuizBtn.className = activeStyle;
+                initQuiz();
+            } else if (mode === 'list') {
+                sectionList.classList.remove('hidden');
+                modeListBtn.className = activeStyle;
+                renderListTable();
+            }
+        }
+
+        modeFlashcardsBtn.addEventListener('click', () => setMode('flashcards'));
+        modeQuizBtn.addEventListener('click', () => setMode('quiz'));
+        modeListBtn.addEventListener('click', () => setMode('list'));
+
+        // Card Flip
+        cardContainer.addEventListener('click', () => {
+            card.classList.toggle('rotate-y-180');
+        });
+
+        function updateFlashcard() {
+            card.classList.remove('rotate-y-180');
+            
+            if (filteredVocab.length === 0) {
+                cardHebrew.textContent = "לא נמצאו מילים";
+                cardArabic.textContent = "-";
+                cardCatFront.textContent = "-";
+                cardCatBack.textContent = "-";
+                cardCounter.textContent = "0 / 0";
+                cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'הכל' : categorySelect.value;
+                return;
+            }
+
+            const current = filteredVocab[currentIndex];
+            cardHebrew.textContent = current.hebrew;
+            cardArabic.textContent = current.arabic;
+            cardCatFront.textContent = current.category;
+            cardCatBack.textContent = current.category;
+            cardCounter.textContent = `${currentIndex + 1} / ${filteredVocab.length}`;
+            cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'כל הנושאים' : categorySelect.value;
+        }
+
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!filteredVocab.length) return;
+            currentIndex = (currentIndex - 1 + filteredVocab.length) % filteredVocab.length;
+            updateFlashcard();
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!filteredVocab.length) return;
+            currentIndex = (currentIndex + 1) % filteredVocab.length;
+            updateFlashcard();
+        });
+
+        randomBtn.addEventListener('click', () => {
+            if (!filteredVocab.length) return;
+            currentIndex = Math.floor(Math.random() * filteredVocab.length);
+            updateFlashcard();
+        });
+
+        // List View Render
+        function renderListTable() {
+            vocabTableBody.innerHTML = '';
+            filteredVocab.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-3.5 font-medium text-slate-800">${item.hebrew}</td>
+                    <td class="p-3.5 text-teal-700 font-bold">${item.arabic}</td>
+                    <td class="p-3.5"><span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-md border border-teal-200/50">${item.category}</span></td>
+                `;
+                vocabTableBody.appendChild(tr);
+            });
+        }
+
+        // Quiz Logic
+        function initQuiz() {
+            quizScore = 0;
+            quizCurrentIndex = 0;
+            quizScoreEl.textContent = `ניקוד: 0`;
+
+            const pool = filteredVocab.length >= 4 ? filteredVocab : vocabulary;
+            quizQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
+            
+            renderQuizStep();
+        }
+
+        function renderQuizStep() {
+            quizFeedback.textContent = '';
+            quizNextBtn.classList.add('hidden');
+            quizOptions.innerHTML = '';
+
+            const q = quizQuestions[quizCurrentIndex];
+            quizQuestion.textContent = q.hebrew;
+            quizProgressEl.textContent = `שאלה ${quizCurrentIndex + 1} מתוך ${quizQuestions.length}`;
+
+            // Mix distractors
+            let options = [q.arabic];
+            let distractors = vocabulary.filter(v => v.arabic !== q.arabic).sort(() => 0.5 - Math.random()).slice(0, 3);
+            distractors.forEach(d => options.push(d.arabic));
+            options.sort(() => 0.5 - Math.random());
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-right bg-slate-50 hover:bg-slate-100 border border-slate-200 p-3.5 rounded-xl text-base font-semibold text-slate-700 transition flex justify-between items-center active:scale-[0.99]";
+                btn.innerHTML = `<span>${opt}</span><i class="far fa-circle text-slate-300"></i>`;
+                btn.onclick = () => selectQuizAnswer(btn, opt, q.arabic);
+                quizOptions.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(btn, chosen, correct) {
+            const allBtns = quizOptions.querySelectorAll('button');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (chosen === correct) {
+                btn.className = "w-full text-right bg-emerald-50 border-2 border-emerald-500 p-3.5 rounded-xl text-base font-bold text-emerald-800 flex justify-between items-center";
+                btn.querySelector('i').className = "fas fa-check-circle text-emerald-600";
+                quizFeedback.textContent = "כל הכבוד! תשובה נכונה ✨";
+                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-emerald-600";
+                quizScore += 10;
+                quizScoreEl.textContent = `ניקוד: ${quizScore}`;
+            } else {
+                btn.className = "w-full text-right bg-rose-50 border-2 border-rose-500 p-3.5 rounded-xl text-base font-bold text-rose-800 flex justify-between items-center";
+                btn.querySelector('i').className = "fas fa-times-circle text-rose-600";
+
+                allBtns.forEach(b => {
+                    if (b.textContent.trim() === correct) {
+                        b.className = "w-full text-right bg-emerald-50 border-2 border-emerald-400 p-3.5 rounded-xl text-base font-bold text-emerald-700 flex justify-between items-center";
+                    }
+                });
+
+                quizFeedback.textContent = `לא מדויק, התשובה הנכונה היא: ${correct}`;
+                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-rose-600";
+            }
+
+            quizNextBtn.classList.remove('hidden');
+        }
+
+        quizNextBtn.addEventListener('click', () => {
+            quizCurrentIndex++;
+            if (quizCurrentIndex < quizQuestions.length) {
+                renderQuizStep();
+            } else {
+                finishQuiz();
+            }
+        });
+
+        function finishQuiz() {
+            quizQuestion.textContent = "המבחן הושלם!";
+            quizOptions.innerHTML = `
+                <div class="text-center py-6">
+                    <p class="text-sm text-slate-500 mb-1">הציון הסופי שלך:</p>
+                    <p class="text-5xl font-extrabold text-teal-700 mb-3">${quizScore}</p>
+                    <p class="text-xs text-slate-600">${quizScore >= 80 ? 'תוצאה מעולה! המשך כך!' : 'מומלץ לעבור שוב על הכרטיסיות ולתרגל.'}</p>
+                </div>
+            `;
+            quizFeedback.textContent = '';
+            quizNextBtn.classList.add('hidden');
+
+            const restartBtn = document.createElement('button');
+            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow transition text-sm";
+            restartBtn.textContent = "התחל מבחן חדש";
+            restartBtn.onclick = initQuiz;
+            quizOptions.appendChild(restartBtn);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!sectionFlashcards.classList.contains('hidden')) {
+                if (e.key === 'ArrowRight') prevBtn.click();
+                if (e.key === 'ArrowLeft') nextBtn.click();
+                if (e.key === ' ') cardContainer.click();
+            }
+        });
+
+        // Initialize
+        updateFlashcard();
+    </script>
+</body>
+</html>
+```eof
