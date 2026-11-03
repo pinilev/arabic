@@ -1,39 +1,18 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl" class="h-full">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לימוד אוצר מילים: עברית - ערבית מדוברת</title>
+    <title>לימוד אוצר מילים: עברית - ערבית</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            700: '#0f766e',
-                            800: '#115e59',
-                            900: '#134e4a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
         body {
             font-family: 'Rubik', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
         .perspective {
-            perspective: 1200px;
+            perspective: 1000px;
         }
         .transform-style-3d {
             transform-style: preserve-3d;
@@ -45,294 +24,200 @@
         .rotate-y-180 {
             transform: rotateY(180deg);
         }
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(13, 148, 136, 0.4);
-            border-radius: 999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(13, 148, 136, 0.7);
-        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-full flex flex-col justify-between transition-colors duration-200">
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
 
-    <!-- Header Navigation -->
-    <header class="bg-teal-800 dark:bg-slate-950 text-white shadow-lg sticky top-0 z-50 border-b border-teal-700/50 dark:border-slate-800">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+    <!-- Header -->
+    <header class="bg-teal-700 text-white shadow-md p-4 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <div class="bg-teal-800 p-2 rounded-lg">
+                    <i class="fas fa-book-open text-2xl text-teal-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">אוצר מילים: עברית - ערבית</h1>
+                    <p class="text-xs text-teal-200">ערבית מדוברת • תרגול, שינון ומשחקים</p>
+                </div>
+            </div>
             
-            <!-- Logo & Title -->
-            <div class="flex items-center justify-between w-full md:w-auto">
-                <div class="flex items-center gap-3">
-                    <div class="bg-teal-600/50 p-2.5 rounded-2xl shadow-inner border border-teal-400/20">
-                        <i class="fas fa-language text-2xl text-teal-200"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold tracking-wide">אוצר מילים: עברית - ערבית</h1>
-                        <p class="text-xs text-teal-200/90 font-medium">ערבית מדוברת • שינון, הקראה ומבחנים</p>
-                    </div>
-                </div>
-
-                <!-- Dark Mode Toggle Button (Mobile) -->
-                <button id="theme-toggle-mobile" class="md:hidden p-2 rounded-xl bg-teal-900/60 text-amber-300 hover:bg-teal-700/60 transition">
-                    <i class="fas fa-moon text-lg" id="theme-icon-mobile"></i>
+            <!-- Navigation Modes -->
+            <div class="flex flex-wrap justify-center bg-teal-800/60 p-1 rounded-xl gap-1 border border-teal-600/50">
+                <button id="mode-flashcards" class="bg-white text-teal-900 font-semibold px-3 py-1.5 rounded-lg text-xs sm:text-sm transition shadow">
+                    <i class="fas fa-clone ml-1"></i> כרטיסיות
+                </button>
+                <button id="mode-quiz" class="hover:bg-teal-700/60 text-white font-medium px-3 py-1.5 rounded-lg text-xs sm:text-sm transition">
+                    <i class="fas fa-vial ml-1"></i> מבחן
+                </button>
+                <button id="mode-match" class="hover:bg-teal-700/60 text-white font-medium px-3 py-1.5 rounded-lg text-xs sm:text-sm transition">
+                    <i class="fas fa-puzzle-piece ml-1"></i> התאמה
+                </button>
+                <button id="mode-list" class="hover:bg-teal-700/60 text-white font-medium px-3 py-1.5 rounded-lg text-xs sm:text-sm transition">
+                    <i class="fas fa-list ml-1"></i> רשימה
                 </button>
             </div>
-
-            <!-- Main Mode Navigation Switcher -->
-            <div class="flex items-center gap-2 w-full md:w-auto justify-center">
-                <div class="flex bg-teal-950/60 dark:bg-slate-900 p-1 rounded-2xl border border-teal-700/40 dark:border-slate-800 w-full md:w-auto justify-between md:justify-start">
-                    <button id="mode-flashcards" class="nav-btn bg-white text-teal-900 font-semibold px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md">
-                        <i class="fas fa-clone"></i> <span>כרטיסיות</span>
-                    </button>
-                    <button id="mode-quiz" class="nav-btn text-teal-100 hover:text-white hover:bg-teal-700/40 font-medium px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5">
-                        <i class="fas fa-vial"></i> <span>מבחן</span>
-                    </button>
-                    <button id="mode-spelling" class="nav-btn text-teal-100 hover:text-white hover:bg-teal-700/40 font-medium px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5">
-                        <i class="fas fa-pen-keyboard"></i> <span>תרגול</span>
-                    </button>
-                    <button id="mode-list" class="nav-btn text-teal-100 hover:text-white hover:bg-teal-700/40 font-medium px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5">
-                        <i class="fas fa-list-ul"></i> <span>רשימה</span>
-                    </button>
-                </div>
-
-                <!-- Theme Toggle Desktop -->
-                <button id="theme-toggle" class="hidden md:flex p-2.5 rounded-xl bg-teal-900/60 text-amber-300 hover:bg-teal-700/60 transition border border-teal-700/40" title="החלף מצב תאורה">
-                    <i class="fas fa-moon text-lg" id="theme-icon"></i>
-                </button>
-            </div>
-
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-5xl mx-auto p-4 w-full flex-grow">
+    <main class="max-w-4xl mx-auto p-4 w-full flex-grow">
 
-        <!-- Controls / Search Bar & Category Select -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 mb-6 transition">
-            <div class="flex flex-col sm:flex-row gap-3 justify-between items-center">
-                <!-- Search Box -->
-                <div class="relative w-full sm:flex-1">
-                    <i class="fas fa-search absolute right-3.5 top-3.5 text-slate-400"></i>
-                    <input type="text" id="search-input" placeholder="חפש מילה בעברית או בערבית..." 
-                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pr-10 pl-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
-                    <button id="clear-search" class="absolute left-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
-                        <i class="fas fa-times-circle"></i>
-                    </button>
-                </div>
-
-                <!-- Filters Group -->
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <!-- Category Dropdown -->
-                    <div class="flex-1 sm:flex-none">
-                        <select id="category-select" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
-                            <option value="all">📚 כל הנושאים</option>
-                            <option value="favorites">⭐ מועדפים בלבד</option>
-                        </select>
-                    </div>
-
-                    <!-- Front/Back Flip Direction Switcher -->
-                    <button id="direction-toggle-btn" class="bg-teal-50 dark:bg-slate-700 hover:bg-teal-100 dark:hover:bg-slate-600 text-teal-800 dark:text-teal-200 px-3 py-2.5 rounded-xl border border-teal-200 dark:border-slate-600 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap transition" title="שנה כיוון למידה">
-                        <i class="fas fa-right-left text-teal-600 dark:text-teal-400"></i>
-                        <span id="direction-label">עברית ← ערבית</span>
-                    </button>
-                </div>
+        <!-- Controls / Search Bar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
+            <div class="relative w-full sm:w-auto sm:flex-1">
+                <i class="fas fa-search absolute right-3 top-3 text-slate-400"></i>
+                <input type="text" id="search-input" placeholder="חפש מילה בעברית או בערבית..." 
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pr-10 pl-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition">
+            </div>
+            
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <label for="category-select" class="text-xs font-semibold text-slate-500 whitespace-nowrap">נושא:</label>
+                <select id="category-select" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 transition">
+                    <option value="all">כל הנושאים</option>
+                    <option value="saved">⭐ מילים שמורות</option>
+                </select>
             </div>
         </div>
 
-        <!-- FLASHCARDS SECTION -->
+        <!-- Flashcards Section -->
         <section id="section-flashcards" class="flex flex-col items-center">
-            
-            <!-- Counter & Category Badge -->
-            <div class="mb-3 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-200/70 dark:bg-slate-800/80 px-3.5 py-1 rounded-full flex items-center gap-2 border border-slate-300/40 dark:border-slate-700">
+            <!-- Counter & Status -->
+            <div class="mb-3 text-xs font-semibold text-slate-500 bg-slate-200/60 px-3 py-1 rounded-full flex items-center gap-2">
                 <span id="card-counter">0 / 0</span>
                 <span>•</span>
-                <span id="card-category-badge" class="text-teal-700 dark:text-teal-400 font-bold">כל הנושאים</span>
+                <span id="card-category-badge" class="text-teal-700">הכל</span>
             </div>
 
-            <!-- Interactive Flip Card Container (Reduced size) -->
-            <div class="w-full max-w-sm h-64 sm:h-72 perspective cursor-pointer mb-5" id="card-container">
-                <div id="card" class="w-full h-full relative transform-style-3d transition-transform duration-500 shadow-lg rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <!-- Card Container -->
+            <div class="w-full max-w-xs sm:max-w-sm h-64 perspective cursor-pointer mb-5 relative" id="card-container">
+                <div id="card" class="w-full h-full relative transform-style-3d transition-transform duration-500 shadow-lg rounded-3xl bg-white border border-slate-100">
                     
-                    <!-- Front Side -->
-                    <div class="absolute inset-0 backface-hidden flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-white via-slate-50 to-teal-50/30 dark:from-slate-800 dark:via-slate-800 dark:to-teal-950/20 text-center border-2 border-teal-500/20 dark:border-teal-500/30">
-                        
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300 font-medium px-2.5 py-0.5 rounded-md border border-teal-200 dark:border-teal-800" id="card-cat-front">נושא</span>
-                            
-                            <div class="flex items-center gap-1.5">
-                                <button id="speak-front-btn" class="text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 p-1 rounded-full transition" title="השמע מילה">
-                                    <i class="fas fa-volume-high text-base"></i>
+                    <!-- Front Side (Hebrew) -->
+                    <div class="absolute inset-0 backface-hidden flex flex-col justify-between p-5 rounded-3xl bg-gradient-to-b from-white to-teal-50/30 text-center border-2 border-teal-500/20">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span class="bg-teal-50 text-teal-700 font-medium px-2.5 py-1 rounded-lg" id="card-cat-front">קטגוריה</span>
+                            <div class="flex items-center gap-2">
+                                <button id="star-btn" class="text-slate-300 hover:text-amber-400 text-lg transition p-1" title="שמור מילה">
+                                    <i class="fas fa-star"></i>
                                 </button>
-                                <button id="favorite-btn" class="text-slate-300 dark:text-slate-600 hover:text-amber-400 dark:hover:text-amber-400 p-1 rounded-full transition" title="הוסף למועדפים">
-                                    <i class="fas fa-star text-base"></i>
-                                </button>
+                                <span class="text-slate-400"><i class="fas fa-globe ml-1"></i>עברית</span>
                             </div>
                         </div>
-
-                        <div class="my-auto px-2">
-                            <span class="text-[11px] text-slate-400 dark:text-slate-500 block mb-1 font-medium" id="card-lang-front">עברית</span>
-                            <h2 id="card-text-front" class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 leading-snug">מילה</h2>
+                        <div class="my-auto flex flex-col items-center gap-1.5">
+                            <h2 id="card-hebrew" class="text-2xl sm:text-3xl font-bold text-slate-800">מילה</h2>
+                            <button id="speak-hebrew-btn" class="mt-1 text-slate-400 hover:text-teal-600 transition p-1.5 text-xs bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center">
+                                <i class="fas fa-volume-high"></i>
+                            </button>
                         </div>
-
-                        <div class="text-base text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 pt-1">
-                            <i class="fas fa-rotate text-teal-600 dark:text-teal-400"></i>
-                            <span>לחץ להפיכת הכרטיס</span>
+                        <div class="text-base sm:text-lg font-bold text-teal-700 flex items-center justify-center gap-2">
+                            <i class="fas fa-redo text-teal-600 text-lg sm:text-xl"></i>
+                            <span>לחץ להיפוך הכרטיס</span>
                         </div>
                     </div>
 
-                    <!-- Back Side -->
-                    <div class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col justify-between p-5 rounded-2xl bg-teal-800 dark:bg-teal-950 text-white text-center shadow-inner border-2 border-teal-600/40">
-                        
+                    <!-- Back Side (Arabic Transliteration) -->
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col justify-between p-5 rounded-3xl bg-teal-800 text-white text-center shadow-inner">
                         <div class="flex justify-between items-center text-xs text-teal-200">
-                            <span class="bg-teal-900/80 text-teal-200 font-medium px-2.5 py-0.5 rounded-md border border-teal-700/50" id="card-cat-back">נושא</span>
-                            
-                            <div class="flex items-center gap-1.5">
-                                <button id="speak-back-btn" class="text-teal-300 hover:text-white p-1 rounded-full transition" title="השמע מילה">
-                                    <i class="fas fa-volume-high text-base"></i>
-                                </button>
-                            </div>
+                            <span class="bg-teal-900/60 text-teal-200 font-medium px-2.5 py-1 rounded-lg" id="card-cat-back">קטגוריה</span>
+                            <span>ערבית (תעתיק)</span>
                         </div>
-
-                        <div class="my-auto px-2">
-                            <span class="text-[11px] text-teal-300/80 block mb-1 font-medium" id="card-lang-back">ערבית (תעתיק)</span>
-                            <h2 id="card-text-back" class="text-3xl sm:text-4xl font-extrabold text-amber-300 dark:text-amber-400 tracking-wide leading-snug">תעתיק</h2>
+                        <div class="my-auto flex flex-col items-center gap-1.5">
+                            <h2 id="card-arabic" class="text-3xl sm:text-4xl font-extrabold text-amber-300 tracking-wide">תעתיק</h2>
+                            <button id="speak-arabic-btn" class="mt-1 text-teal-200 hover:text-amber-300 transition p-1.5 text-xs bg-teal-900/50 rounded-full w-8 h-8 flex items-center justify-center">
+                                <i class="fas fa-volume-high"></i>
+                            </button>
                         </div>
-
-                        <div class="text-base text-teal-300/80 flex items-center justify-center gap-1.5 pt-1">
-                            <i class="fas fa-rotate"></i>
-                            <span>לחץ להפיכת הכרטיס</span>
+                        <div class="text-base sm:text-lg font-bold text-amber-300 flex items-center justify-center gap-2">
+                            <i class="fas fa-redo text-lg sm:text-xl"></i>
+                            <span>לחץ לחזרה לעברית</span>
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- Action Controls -->
-            <div class="flex items-center justify-center gap-3 w-full max-w-sm mb-6">
-                <button id="prev-btn" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 h-10 w-12 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition active:scale-95" title="מילה קודמת (חץ ימין)">
-                    <i class="fas fa-chevron-right text-base"></i>
+            <!-- Controls Buttons -->
+            <div class="flex items-center gap-4 mb-4">
+                <button id="prev-btn" class="bg-white hover:bg-slate-100 text-slate-700 w-12 h-12 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center transition active:scale-95" title="מילה קודמת">
+                    <i class="fas fa-chevron-right text-lg"></i>
                 </button>
-                
-                <button id="random-btn" class="flex-1 bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/80 text-teal-800 dark:text-teal-200 font-semibold h-10 rounded-xl shadow-sm border border-teal-200 dark:border-teal-800 transition text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-95">
+                <button id="random-btn" class="bg-teal-50 hover:bg-teal-100 text-teal-800 font-semibold px-4 py-2.5 rounded-2xl shadow-sm border border-teal-200 transition text-sm flex items-center gap-2 active:scale-95">
                     <i class="fas fa-shuffle"></i>
                     <span>ערבב מילים</span>
                 </button>
-
-                <button id="next-btn" class="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 h-10 w-12 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 flex items-center justify-center transition active:scale-95" title="מילה הבאה (חץ שמאל)">
-                    <i class="fas fa-chevron-left text-base"></i>
+                <button id="next-btn" class="bg-white hover:bg-slate-100 text-slate-700 w-12 h-12 rounded-2xl shadow-md border border-slate-200 flex items-center justify-center transition active:scale-95" title="מילה הבאה">
+                    <i class="fas fa-chevron-left text-lg"></i>
                 </button>
             </div>
-
         </section>
 
-        <!-- QUIZ SECTION -->
+        <!-- Quiz Section -->
         <section id="section-quiz" class="hidden flex flex-col items-center">
-            <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 sm:p-8">
+            <div class="w-full max-w-lg bg-white rounded-3xl shadow-md border border-slate-200 p-6 sm:p-8">
                 
-                <!-- Quiz Progress Bar -->
-                <div class="flex justify-between items-center mb-4">
-                    <span id="quiz-progress" class="text-xs font-bold text-slate-400 dark:text-slate-500">שאלה 1 מתוך 10</span>
-                    <span id="quiz-score" class="text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950 border border-teal-200 dark:border-teal-800 px-3 py-1 rounded-full">ניקוד: 0</span>
-                </div>
-
-                <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full mb-6 overflow-hidden">
-                    <div id="quiz-progress-bar" class="bg-teal-600 h-full w-0 transition-all duration-300"></div>
+                <!-- Header Status -->
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                    <span id="quiz-progress" class="text-xs font-bold text-slate-400">שאלה 1 מתוך 10</span>
+                    <span id="quiz-score" class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">ניקוד: 0</span>
                 </div>
 
                 <!-- Question -->
                 <div class="text-center mb-6">
-                    <span class="text-xs text-slate-400 dark:text-slate-400 font-medium block mb-1">איך אומרים בערבית:</span>
-                    <div class="flex items-center justify-center gap-2">
-                        <h2 id="quiz-question" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">מילה</h2>
-                        <button id="quiz-speak-btn" class="text-teal-600 dark:text-teal-400 p-1.5 hover:bg-teal-50 dark:hover:bg-slate-700 rounded-full transition">
-                            <i class="fas fa-volume-high"></i>
-                        </button>
-                    </div>
+                    <span class="text-xs text-slate-400 font-medium">איך אומרים בערבית:</span>
+                    <h2 id="quiz-question" class="text-3xl font-extrabold text-slate-800 mt-1">מילה</h2>
                 </div>
 
                 <!-- Answer Options -->
                 <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6">
-                    <!-- Options injected dynamically -->
+                    <!-- Options injected here -->
                 </div>
 
                 <!-- Feedback Message -->
-                <div id="quiz-feedback" class="text-center font-bold text-sm min-h-[28px] mb-4"></div>
+                <div id="quiz-feedback" class="text-center font-bold text-sm min-h-[24px] mb-4"></div>
 
                 <!-- Next Question Button -->
-                <button id="quiz-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow-md transition hidden flex items-center justify-center gap-2">
-                    <span>לשאלה הבאה</span>
-                    <i class="fas fa-arrow-left"></i>
+                <button id="quiz-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow-md transition hidden">
+                    לשאלה הבאה <i class="fas fa-arrow-left mr-2"></i>
                 </button>
             </div>
         </section>
 
-        <!-- SPELLING / PRACTICE SECTION -->
-        <section id="section-spelling" class="hidden flex flex-col items-center">
-            <div class="w-full max-w-lg bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-slate-200 dark:border-slate-700 p-6 sm:p-8">
-                
-                <div class="flex justify-between items-center mb-6">
-                    <span id="spelling-progress" class="text-xs font-bold text-slate-400 dark:text-slate-500">שאלה 1 מתוך 10</span>
-                    <span id="spelling-score" class="text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950 border border-teal-200 dark:border-teal-800 px-3 py-1 rounded-full">ניקוד: 0</span>
-                </div>
-
-                <div class="text-center mb-6">
-                    <span class="text-xs text-slate-400 dark:text-slate-400 font-medium block mb-1">תרגם/י והקלד/י בתעתיק:</span>
-                    <div class="flex items-center justify-center gap-2 mb-2">
-                        <h2 id="spelling-question" class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">מילה</h2>
-                        <button id="spelling-speak-btn" class="text-teal-600 dark:text-teal-400 p-1.5 hover:bg-teal-50 dark:hover:bg-slate-700 rounded-full transition">
-                            <i class="fas fa-volume-high"></i>
-                        </button>
-                    </div>
-                    <p class="text-xs text-slate-400 dark:text-slate-500">נושא: <span id="spelling-cat" class="text-teal-600 dark:text-teal-400 font-semibold">-</span></p>
-                </div>
-
-                <form id="spelling-form" class="mb-4">
-                    <div class="relative mb-4">
-                        <input type="text" id="spelling-input" autocomplete="off" placeholder="הקלד/י כאן בערבית/תעתיק..." 
-                            class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl px-4 py-3.5 text-center text-lg font-bold focus:outline-none focus:border-teal-500 transition">
-                    </div>
-                    <button type="submit" id="spelling-submit-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow-md transition">
-                        בדיקת תשובה
+        <!-- Matching Game Section -->
+        <section id="section-match" class="hidden flex flex-col items-center">
+            <div class="w-full max-w-2xl bg-white rounded-3xl shadow-md border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base">משחק התאמה: חבר בין המילים למשמעותן</h3>
+                    <button id="restart-match-btn" class="text-xs font-semibold bg-teal-50 text-teal-700 px-3 py-1.5 rounded-lg border border-teal-200 hover:bg-teal-100 transition">
+                        <i class="fas fa-rotate-right ml-1"></i> משחק חדש
                     </button>
-                </form>
+                </div>
+                
+                <div id="match-grid" class="grid grid-cols-2 gap-3 mb-4">
+                    <!-- Cards injected here -->
+                </div>
 
-                <div id="spelling-feedback" class="text-center font-bold text-sm min-h-[36px] mb-4"></div>
-
-                <button id="spelling-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow-md transition hidden flex items-center justify-center gap-2">
-                    <span>לשאלה הבאה</span>
-                    <i class="fas fa-arrow-left"></i>
-                </button>
+                <div id="match-win-msg" class="hidden text-center py-6 bg-emerald-50 rounded-2xl border border-emerald-200">
+                    <i class="fas fa-trophy text-4xl text-amber-500 mb-2"></i>
+                    <h4 class="text-xl font-bold text-emerald-800 mb-1">כל הכבוד!</h4>
+                    <p class="text-xs text-emerald-600">הצלחת להתאים את כל המילים בהצלחה!</p>
+                </div>
             </div>
         </section>
 
-        <!-- VOCABULARY LIST VIEW SECTION -->
+        <!-- List View Section -->
         <section id="section-list" class="hidden">
-            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div class="p-3 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
-                    <span id="list-count-label">מציג 0 מילים</span>
-                    <span>לחץ על כוכב לסימון מועדפים</span>
-                </div>
-                <div class="max-h-[600px] overflow-y-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="max-h-[550px] overflow-y-auto">
                     <table class="w-full text-right text-sm">
-                        <thead class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-semibold sticky top-0 border-b border-slate-200 dark:border-slate-700">
+                        <thead class="bg-slate-50 text-slate-500 font-semibold sticky top-0 border-b border-slate-200">
                             <tr>
-                                <th class="p-3.5 w-12 text-center">⭐</th>
                                 <th class="p-3.5">עברית</th>
                                 <th class="p-3.5">ערבית (תעתיק)</th>
                                 <th class="p-3.5">נושא</th>
-                                <th class="p-3.5 w-12 text-center"><i class="fas fa-volume-high"></i></th>
+                                <th class="p-3.5 text-center">השמעה</th>
                             </tr>
                         </thead>
-                        <tbody id="vocab-table-body" class="divide-y divide-slate-100 dark:divide-slate-700/60">
-                            <!-- Rows injected dynamically -->
+                        <tbody id="vocab-table-body" class="divide-y divide-slate-100">
+                            <!-- Rows injected here -->
                         </tbody>
                     </table>
                 </div>
@@ -342,14 +227,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-4 px-4 text-center text-xs text-slate-500 dark:text-slate-400 mt-6">
-        <p>ערכה ללימוד ערבית מדוברת • תעתיק עברי ומילון מפורט</p>
+    <footer class="bg-slate-100 border-t border-slate-200 p-3 text-center text-xs text-slate-500">
+        ערכה ללימוד ערבית מדוברת • מבוסס על מילון המילים
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
-        // Full Vocabulary Database
-        const vocabulary = [
+        // Default Vocabulary Database
+        const initialVocabulary = [
             // מילות תואר
             { id: 1, hebrew: "בחוץ", arabic: "ברא", category: "מילות תואר" },
             { id: 2, hebrew: "בפנים", arabic: "ג'נא", category: "מילות תואר" },
@@ -378,7 +262,7 @@
 
             // משפחה
             { id: 25, hebrew: "אבא / אבי", arabic: "באבא / אבוי", category: "משפחה" },
-            { id: 26, hebrew: "את", arabic: "אנתא / אנתה", category: "משפחה" },
+            { id: 26, hebrew: "את", arabic: "אה", category: "משפחה" },
             { id: 27, hebrew: "אחות / אחיות", arabic: "אח'ת / ח'ואת", category: "משפחה" },
             { id: 28, hebrew: "אחים", arabic: "אח'וה", category: "משפחה" },
             { id: 29, hebrew: "אמא / אימי", arabic: "מאמא / אם / אימי", category: "משפחה" },
@@ -459,192 +343,94 @@
             { id: 98, hebrew: "אתמול", arabic: "מבירח", category: "מילות יחס וקישור" },
             { id: 99, hebrew: "דווקא כן", arabic: "אמבלא", category: "מילות יחס וקישור" },
             { id: 100, hebrew: "הזה / הזאת / האלה", arabic: "הל", category: "מילות יחס וקישור" },
-            { id: 101, hebrew: "הרבה", arabic: "כתיר", category: "מילות יחס וקישור" },
-            { id: 102, hebrew: "זאת אומרת", arabic: "יעני", category: "מילות יחס וקישור" },
-            { id: 103, hebrew: "זאת / הזאת", arabic: "האי / האדי", category: "מילות יחס וקישור" },
-            { id: 104, hebrew: "זה / הזה", arabic: "האדא", category: "מילות יחס וקישור" },
-            { id: 105, hebrew: "יותר", arabic: "אכתר", category: "מילות יחס וקישור" },
-            { id: 106, hebrew: "יש / כאן", arabic: "פיה / הון", category: "מילות יחס וקישור" },
-            { id: 107, hebrew: "כדי ש...", arabic: "חתא", category: "מילות יחס וקישור" },
-            { id: 108, hebrew: "כי / מפני ש...", arabic: "ליאנו / אנו", category: "מילות יחס וקישור" },
-
-            // כללי
-            { id: 109, hebrew: "אבטלה", arabic: "בטאלה", category: "כללי" },
-            { id: 110, hebrew: "אדם / אנשים", arabic: "שחץ / אשחאצ", category: "כללי" },
-            { id: 111, hebrew: "אוטובוס / אופניים", arabic: "באץ / בסכלית", category: "כללי" },
-            { id: 112, hebrew: "אורחים", arabic: "דיוף", category: "כללי" },
-            { id: 113, hebrew: "אי אפשר", arabic: "מש ממכן", category: "כללי" },
-            { id: 114, hebrew: "אסור", arabic: "ממנוע", category: "כללי" },
-            { id: 115, hebrew: "אשה", arabic: "מרה", category: "כללי" },
-            { id: 116, hebrew: "בדרך כלל", arabic: "עאדתן", category: "כללי" },
-            { id: 117, hebrew: "בוודאי / בטח", arabic: "מעלום / אכיד", category: "כללי" },
-            { id: 118, hebrew: "בית", arabic: "בית / דאר", category: "כללי" },
-            { id: 119, hebrew: "בית חולים", arabic: "מסתשפא", category: "כללי" },
-            { id: 120, hebrew: "בית ספר", arabic: "מדרסה", category: "כללי" },
-            { id: 121, hebrew: "בעל הבית", arabic: "צאחב-אל-בית", category: "כללי" },
-            { id: 122, hebrew: "בקבוק", arabic: "קנינה", category: "כללי" },
-            { id: 123, hebrew: "גפרורים", arabic: "כברית", category: "כללי" },
-            { id: 124, hebrew: "דבר", arabic: "אשי", category: "כללי" },
-            { id: 125, hebrew: "דלת", arabic: "באב", category: "כללי" },
-            { id: 126, hebrew: "וילון", arabic: "ברדאי", category: "כללי" },
-            { id: 127, hebrew: "זול", arabic: "רח'יצ", category: "כללי" },
-            { id: 128, hebrew: "חדר", arabic: "אודה / ע'רפה", category: "כללי" },
-            { id: 129, hebrew: "חלון", arabic: "שבאכ", category: "כללי" },
-            { id: 130, hebrew: "חנות", arabic: "דכאנה", category: "כללי" },
-            { id: 131, hebrew: "חשוב", arabic: "מהם", category: "כללי" },
-            { id: 132, hebrew: "יום הולדת", arabic: "עיד מילאד", category: "כללי" },
-            { id: 133, hebrew: "ילד / ילדים", arabic: "ולד / ולאד", category: "כללי" },
-            { id: 134, hebrew: "יקר", arabic: "ע'אלי", category: "כללי" },
-            { id: 135, hebrew: "כחול", arabic: "אזרק", category: "כללי" },
-            { id: 136, hebrew: "כסא", arabic: "כורסי", category: "כללי" },
-            { id: 137, hebrew: "כסף", arabic: "מצארי", category: "כללי" },
-            { id: 138, hebrew: "כפר / ישוב", arabic: "בלד", category: "כללי" },
-            { id: 139, hebrew: "מחברת", arabic: "דפתר", category: "כללי" },
-            { id: 140, hebrew: "מיץ", arabic: "עציר", category: "כללי" },
-            { id: 141, hebrew: "משפט", arabic: "ג'מלה", category: "כללי" },
-            { id: 142, hebrew: "ספר / ספרים", arabic: "כתאב / כתב", category: "כללי" },
-            { id: 143, hebrew: "עבודה", arabic: "שע'ל", category: "כללי" },
-            { id: 144, hebrew: "עיתון", arabic: "ג'רידה", category: "כללי" },
-            { id: 145, hebrew: "צבע / גוון", arabic: "לון", category: "כללי" },
-            { id: 146, hebrew: "קפה", arabic: "קהוה", category: "כללי" },
-            { id: 147, hebrew: "ראש", arabic: "ראס", category: "כללי" },
-            { id: 148, hebrew: "רווק", arabic: "עזאבי", category: "כללי" },
-            { id: 149, hebrew: "רופא", arabic: "דכתור", category: "כללי" },
-            { id: 150, hebrew: "רעיון", arabic: "פכרה", category: "כללי" },
-            { id: 151, hebrew: "שולחן", arabic: "טאולה", category: "כללי" },
-            { id: 152, hebrew: "שום דבר", arabic: "ולא אשי", category: "כללי" },
-            { id: 153, hebrew: "שכן / שכנים", arabic: "ג'אר / ג'יראן", category: "כללי" },
-            { id: 154, hebrew: "שמש", arabic: "שמס", category: "כללי" },
-            { id: 155, hebrew: "תה", arabic: "שאי", category: "כללי" },
-            { id: 156, hebrew: "תחנה", arabic: "מחטה", category: "כללי" },
-            { id: 157, hebrew: "תשובה", arabic: "ג'ואב", category: "כללי" },
 
             // מילות שאלה
-            { id: 158, hebrew: "איך", arabic: "כיף", category: "מילות שאלה" },
-            { id: 159, hebrew: "איפה", arabic: "וין", category: "מילות שאלה" },
-            { id: 160, hebrew: "כמה (ספיר)", arabic: "כם", category: "מילות שאלה" },
-            { id: 161, hebrew: "כמה (לא ספיר)", arabic: "קדיש", category: "מילות שאלה" },
-            { id: 162, hebrew: "למה", arabic: "ליש", category: "מילות שאלה" },
-            { id: 163, hebrew: "מה", arabic: "שו / איש", category: "מילות שאלה" },
-            { id: 164, hebrew: "מי", arabic: "מין", category: "מילות שאלה" },
-            { id: 165, hebrew: "מתי", arabic: "אמתא", category: "מילות שאלה" }
+            { id: 101, hebrew: "איך", arabic: "כיף", category: "מילות שאלה" },
+            { id: 102, hebrew: "איפה", arabic: "וין", category: "מילות שאלה" },
+            { id: 103, hebrew: "כמה (ספיר)", arabic: "כם", category: "מילות שאלה" },
+            { id: 104, hebrew: "כמה (לא ספיר)", arabic: "קדיש", category: "מילות שאלה" },
+            { id: 105, hebrew: "למה", arabic: "ליש", category: "מילות שאלה" },
+            { id: 106, hebrew: "מה", arabic: "שו / איש", category: "מילות שאלה" },
+            { id: 107, hebrew: "מי", arabic: "מין", category: "מילות שאלה" },
+            { id: 108, hebrew: "מתי", arabic: "אמתא", category: "מילות שאלה" }
         ];
+
+        // Load vocabulary from LocalStorage or default
+        let vocabulary = JSON.parse(localStorage.getItem('user_vocab')) || [...initialVocabulary];
+        let savedWordIds = JSON.parse(localStorage.getItem('saved_word_ids')) || [];
 
         // State Variables
         let filteredVocab = [...vocabulary];
-        let favorites = JSON.parse(localStorage.getItem('vocab_favorites') || '[]');
         let currentIndex = 0;
-        let learningDirection = 'hebrewFirst'; // 'hebrewFirst' or 'arabicFirst'
-
-        // Quiz State
         let quizScore = 0;
         let quizCurrentIndex = 0;
         let quizQuestions = [];
+        
+        // Matching game state
+        let selectedMatchCard = null;
+        let matchedPairsCount = 0;
 
-        // Spelling/Practice State
-        let spellingScore = 0;
-        let spellingCurrentIndex = 0;
-        let spellingQuestions = [];
-
-        // Elements
+        // DOM Elements
         const categorySelect = document.getElementById('category-select');
         const searchInput = document.getElementById('search-input');
-        const clearSearchBtn = document.getElementById('clear-search');
-        const directionToggleBtn = document.getElementById('direction-toggle-btn');
-        const directionLabel = document.getElementById('direction-label');
 
         const sectionFlashcards = document.getElementById('section-flashcards');
         const sectionQuiz = document.getElementById('section-quiz');
-        const sectionSpelling = document.getElementById('section-spelling');
+        const sectionMatch = document.getElementById('section-match');
         const sectionList = document.getElementById('section-list');
 
         const modeFlashcardsBtn = document.getElementById('mode-flashcards');
         const modeQuizBtn = document.getElementById('mode-quiz');
-        const modeSpellingBtn = document.getElementById('mode-spelling');
+        const modeMatchBtn = document.getElementById('mode-match');
         const modeListBtn = document.getElementById('mode-list');
 
         const cardContainer = document.getElementById('card-container');
         const card = document.getElementById('card');
-        const cardTextFront = document.getElementById('card-text-front');
-        const cardTextBack = document.getElementById('card-text-back');
-        const cardLangFront = document.getElementById('card-lang-front');
-        const cardLangBack = document.getElementById('card-lang-back');
+        const cardHebrew = document.getElementById('card-hebrew');
+        const cardArabic = document.getElementById('card-arabic');
         const cardCatFront = document.getElementById('card-cat-front');
         const cardCatBack = document.getElementById('card-cat-back');
         const cardCounter = document.getElementById('card-counter');
         const cardCategoryBadge = document.getElementById('card-category-badge');
-        const favoriteBtn = document.getElementById('favorite-btn');
+        const starBtn = document.getElementById('star-btn');
         
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const randomBtn = document.getElementById('random-btn');
 
-        const speakFrontBtn = document.getElementById('speak-front-btn');
-        const speakBackBtn = document.getElementById('speak-back-btn');
-
         const vocabTableBody = document.getElementById('vocab-table-body');
-        const listCountLabel = document.getElementById('list-count-label');
 
-        // Quiz DOM
         const quizQuestion = document.getElementById('quiz-question');
         const quizOptions = document.getElementById('quiz-options');
         const quizFeedback = document.getElementById('quiz-feedback');
         const quizScoreEl = document.getElementById('quiz-score');
         const quizProgressEl = document.getElementById('quiz-progress');
-        const quizProgressBar = document.getElementById('quiz-progress-bar');
         const quizNextBtn = document.getElementById('quiz-next-btn');
-        const quizSpeakBtn = document.getElementById('quiz-speak-btn');
-
-        // Spelling DOM
-        const spellingQuestion = document.getElementById('spelling-question');
-        const spellingCat = document.getElementById('spelling-cat');
-        const spellingForm = document.getElementById('spelling-form');
-        const spellingInput = document.getElementById('spelling-input');
-        const spellingFeedback = document.getElementById('spelling-feedback');
-        const spellingScoreEl = document.getElementById('spelling-score');
-        const spellingProgressEl = document.getElementById('spelling-progress');
-        const spellingNextBtn = document.getElementById('spelling-next-btn');
-        const spellingSpeakBtn = document.getElementById('spelling-speak-btn');
-        const spellingSubmitBtn = document.getElementById('spelling-submit-btn');
-
-        // Theme Toggle Elements
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleMobileBtn = document.getElementById('theme-toggle-mobile');
-
-        // Populate Categories
-        const categories = [...new Set(vocabulary.map(item => item.category))];
-        categories.forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat;
-            opt.textContent = `📂 ${cat}`;
-            categorySelect.appendChild(opt);
-        });
 
         // Speech Synthesis Helper
         function speakText(text, lang = 'he-IL') {
-            if (!('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel(); // Stop ongoing speech
-
-            const cleanText = text.replace(/[\/]/g, ' ').trim();
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.lang = lang;
-            utterance.rate = 0.9;
-            window.speechSynthesis.speak(utterance);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
-        // Toggle Favorites
-        function toggleFavorite(id, e) {
-            if (e) e.stopPropagation();
+        // Populate Categories Select
+        function updateCategoryOptions() {
+            const currentSelected = categorySelect.value;
+            categorySelect.innerHTML = '<option value="all">כל הנושאים</option><option value="saved">⭐ מילים שמורות</option>';
             
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(favId => favId !== id);
-            } else {
-                favorites.push(id);
-            }
-            
-            localStorage.setItem('vocab_favorites', JSON.stringify(favorites));
-            updateFlashcard();
-            renderListTable();
+            const categories = [...new Set(vocabulary.map(item => item.category))];
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                categorySelect.appendChild(opt);
+            });
+
+            categorySelect.value = currentSelected;
         }
 
         // Filter Logic
@@ -652,22 +438,18 @@
             const cat = categorySelect.value;
             const search = searchInput.value.trim().toLowerCase();
 
-            if (search.length > 0) {
-                clearSearchBtn.classList.remove('hidden');
-            } else {
-                clearSearchBtn.classList.add('hidden');
-            }
-
             filteredVocab = vocabulary.filter(item => {
-                const matchCat = (cat === 'all') || 
-                                 (cat === 'favorites' && favorites.includes(item.id)) || 
-                                 (item.category === cat);
-                
-                const matchSearch = item.hebrew.toLowerCase().includes(search) || 
-                                    item.arabic.toLowerCase().includes(search);
-                
+                let matchCat = false;
+                if (cat === 'all') matchCat = true;
+                else if (cat === 'saved') matchCat = savedWordIds.includes(item.id);
+                else matchCat = (item.category === cat);
+
+                const matchSearch = item.hebrew.toLowerCase().includes(search) || item.arabic.toLowerCase().includes(search);
                 return matchCat && matchSearch;
             });
+
+            // ערבוב אקראי של המילים בבחירת נושא/סינון/טעינה ראשונית
+            filteredVocab.sort(() => 0.5 - Math.random());
 
             currentIndex = 0;
             updateFlashcard();
@@ -676,58 +458,48 @@
 
         categorySelect.addEventListener('change', applyFilters);
         searchInput.addEventListener('input', applyFilters);
-        clearSearchBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            applyFilters();
-        });
 
-        // Toggle Learning Direction (Hebrew -> Arabic or Arabic -> Hebrew)
-        directionToggleBtn.addEventListener('click', () => {
-            if (learningDirection === 'hebrewFirst') {
-                learningDirection = 'arabicFirst';
-                directionLabel.textContent = 'ערבית ← עברית';
-            } else {
-                learningDirection = 'hebrewFirst';
-                directionLabel.textContent = 'עברית ← ערבית';
-            }
-            updateFlashcard();
-        });
-
-        // Navigation Switcher
+        // Switch View Modes
         function setMode(mode) {
             sectionFlashcards.classList.add('hidden');
             sectionQuiz.classList.add('hidden');
-            sectionSpelling.classList.add('hidden');
+            sectionMatch.classList.add('hidden');
             sectionList.classList.add('hidden');
 
-            const buttons = [
-                { btn: modeFlashcardsBtn, section: sectionFlashcards, name: 'flashcards' },
-                { btn: modeQuizBtn, section: sectionQuiz, name: 'quiz' },
-                { btn: modeSpellingBtn, section: sectionSpelling, name: 'spelling' },
-                { btn: modeListBtn, section: sectionList, name: 'list' }
-            ];
+            const inactiveStyle = "hover:bg-teal-700/60 text-white font-medium px-3 py-1.5 rounded-lg text-xs sm:text-sm transition";
+            const activeStyle = "bg-white text-teal-900 font-semibold px-3 py-1.5 rounded-lg text-xs sm:text-sm transition shadow";
 
-            buttons.forEach(b => {
-                if (b.name === mode) {
-                    b.section.classList.remove('hidden');
-                    b.btn.className = "nav-btn bg-white dark:bg-slate-800 text-teal-900 dark:text-teal-200 font-semibold px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md border border-slate-200 dark:border-slate-700";
-                } else {
-                    b.btn.className = "nav-btn text-teal-100 dark:text-slate-300 hover:text-white hover:bg-teal-700/40 dark:hover:bg-slate-800 font-medium px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5";
-                }
-            });
+            modeFlashcardsBtn.className = inactiveStyle;
+            modeQuizBtn.className = inactiveStyle;
+            modeMatchBtn.className = inactiveStyle;
+            modeListBtn.className = inactiveStyle;
 
-            if (mode === 'quiz') initQuiz();
-            if (mode === 'spelling') initSpelling();
-            if (mode === 'list') renderListTable();
+            if (mode === 'flashcards') {
+                sectionFlashcards.classList.remove('hidden');
+                modeFlashcardsBtn.className = activeStyle;
+            } else if (mode === 'quiz') {
+                sectionQuiz.classList.remove('hidden');
+                modeQuizBtn.className = activeStyle;
+                initQuiz();
+            } else if (mode === 'match') {
+                sectionMatch.classList.remove('hidden');
+                modeMatchBtn.className = activeStyle;
+                initMatchGame();
+            } else if (mode === 'list') {
+                sectionList.classList.remove('hidden');
+                modeListBtn.className = activeStyle;
+                renderListTable();
+            }
         }
 
         modeFlashcardsBtn.addEventListener('click', () => setMode('flashcards'));
         modeQuizBtn.addEventListener('click', () => setMode('quiz'));
-        modeSpellingBtn.addEventListener('click', () => setMode('spelling'));
+        modeMatchBtn.addEventListener('click', () => setMode('match'));
         modeListBtn.addEventListener('click', () => setMode('list'));
 
-        // Flip Card Interaction
-        cardContainer.addEventListener('click', () => {
+        // Card Flip
+        cardContainer.addEventListener('click', (e) => {
+            if (e.target.closest('#star-btn') || e.target.closest('#speak-hebrew-btn') || e.target.closest('#speak-arabic-btn')) return;
             card.classList.toggle('rotate-y-180');
         });
 
@@ -735,51 +507,59 @@
             card.classList.remove('rotate-y-180');
             
             if (filteredVocab.length === 0) {
-                cardTextFront.textContent = categorySelect.value === 'favorites' ? "אין מילים מועדפות" : "לא נמצאו מילים";
-                cardTextBack.textContent = "-";
+                cardHebrew.textContent = "לא נמצאו מילים";
+                cardArabic.textContent = "-";
                 cardCatFront.textContent = "-";
                 cardCatBack.textContent = "-";
                 cardCounter.textContent = "0 / 0";
-                cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'כל הנושאים' : categorySelect.value;
-                favoriteBtn.innerHTML = '<i class="far fa-star text-slate-300"></i>';
+                cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'הכל' : categorySelect.options[categorySelect.selectedIndex].text;
+                starBtn.classList.add('hidden');
                 return;
             }
 
+            starBtn.classList.remove('hidden');
             const current = filteredVocab[currentIndex];
-            const isFav = favorites.includes(current.id);
-
-            favoriteBtn.innerHTML = isFav 
-                ? '<i class="fas fa-star text-amber-400"></i>' 
-                : '<i class="far fa-star text-slate-300 hover:text-amber-400"></i>';
-            favoriteBtn.onclick = (e) => toggleFavorite(current.id, e);
-
-            if (learningDirection === 'hebrewFirst') {
-                cardLangFront.textContent = "עברית";
-                cardTextFront.textContent = current.hebrew;
-                cardLangBack.textContent = "ערבית (תעתיק)";
-                cardTextBack.textContent = current.arabic;
-
-                speakFrontBtn.onclick = (e) => { e.stopPropagation(); speakText(current.hebrew, 'he-IL'); };
-                speakBackBtn.onclick = (e) => { e.stopPropagation(); speakText(current.arabic, 'he-IL'); };
-            } else {
-                cardLangFront.textContent = "ערבית (תעתיק)";
-                cardTextFront.textContent = current.arabic;
-                cardLangBack.textContent = "עברית";
-                cardTextBack.textContent = current.hebrew;
-
-                speakFrontBtn.onclick = (e) => { e.stopPropagation(); speakText(current.arabic, 'he-IL'); };
-                speakBackBtn.onclick = (e) => { e.stopPropagation(); speakText(current.hebrew, 'he-IL'); };
-            }
-
+            cardHebrew.textContent = current.hebrew;
+            cardArabic.textContent = current.arabic;
             cardCatFront.textContent = current.category;
             cardCatBack.textContent = current.category;
             cardCounter.textContent = `${currentIndex + 1} / ${filteredVocab.length}`;
-            
-            let catName = 'כל הנושאים';
-            if (categorySelect.value === 'favorites') catName = 'מועדפים ⭐';
-            else if (categorySelect.value !== 'all') catName = categorySelect.value;
-            cardCategoryBadge.textContent = catName;
+            cardCategoryBadge.textContent = categorySelect.options[categorySelect.selectedIndex].text;
+
+            // Update Star Status
+            if (savedWordIds.includes(current.id)) {
+                starBtn.className = "text-amber-400 hover:text-amber-500 text-lg transition p-1";
+            } else {
+                starBtn.className = "text-slate-300 hover:text-amber-400 text-lg transition p-1";
+            }
         }
+
+        // Bookmark / Star Functionality
+        starBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!filteredVocab.length) return;
+            const currentId = filteredVocab[currentIndex].id;
+            
+            if (savedWordIds.includes(currentId)) {
+                savedWordIds = savedWordIds.filter(id => id !== currentId);
+            } else {
+                savedWordIds.push(currentId);
+            }
+
+            localStorage.setItem('saved_word_ids', JSON.stringify(savedWordIds));
+            updateFlashcard();
+        });
+
+        // Speech Buttons
+        document.getElementById('speak-hebrew-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (filteredVocab.length) speakText(filteredVocab[currentIndex].hebrew, 'he-IL');
+        });
+
+        document.getElementById('speak-arabic-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (filteredVocab.length) speakText(filteredVocab[currentIndex].arabic, 'ar-SA');
+        });
 
         prevBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -801,53 +581,27 @@
             updateFlashcard();
         });
 
-        // LIST VIEW RENDER
+        // List View Render
         function renderListTable() {
             vocabTableBody.innerHTML = '';
-            listCountLabel.textContent = `מציג ${filteredVocab.length} מילים`;
-
-            if (filteredVocab.length === 0) {
-                vocabTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="p-8 text-center text-slate-400">לא נמצאו מילים להצגה</td>
-                    </tr>
-                `;
-                return;
-            }
-
             filteredVocab.forEach(item => {
-                const isFav = favorites.includes(item.id);
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-b border-slate-100 dark:border-slate-700/60";
-                
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
                 tr.innerHTML = `
+                    <td class="p-3.5 font-medium text-slate-800">${item.hebrew}</td>
+                    <td class="p-3.5 text-teal-700 font-bold">${item.arabic}</td>
+                    <td class="p-3.5"><span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-md border border-teal-200/50">${item.category}</span></td>
                     <td class="p-3.5 text-center">
-                        <button class="fav-list-btn text-base transition ${isFav ? 'text-amber-400' : 'text-slate-300 dark:text-slate-600 hover:text-amber-400'}">
-                            <i class="${isFav ? 'fas' : 'far'} fa-star"></i>
-                        </button>
-                    </td>
-                    <td class="p-3.5 font-medium text-slate-800 dark:text-slate-100">${item.hebrew}</td>
-                    <td class="p-3.5 text-teal-700 dark:text-teal-300 font-bold">${item.arabic}</td>
-                    <td class="p-3.5">
-                        <span class="text-xs bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 font-semibold px-2.5 py-1 rounded-lg border border-teal-200/60 dark:border-teal-800">
-                            ${item.category}
-                        </span>
-                    </td>
-                    <td class="p-3.5 text-center">
-                        <button class="speak-list-btn text-slate-400 hover:text-teal-600 dark:hover:text-teal-300 p-1 rounded-full transition">
+                        <button onclick="speakText('${item.arabic.replace(/'/g, "\\'")}', 'ar-SA')" class="text-slate-400 hover:text-teal-600 p-1.5 transition">
                             <i class="fas fa-volume-high"></i>
                         </button>
                     </td>
                 `;
-
-                tr.querySelector('.fav-list-btn').onclick = (e) => toggleFavorite(item.id, e);
-                tr.querySelector('.speak-list-btn').onclick = () => speakText(item.arabic, 'he-IL');
-
                 vocabTableBody.appendChild(tr);
             });
         }
 
-        // QUIZ LOGIC
+        // Quiz Logic
         function initQuiz() {
             quizScore = 0;
             quizCurrentIndex = 0;
@@ -867,11 +621,8 @@
             const q = quizQuestions[quizCurrentIndex];
             quizQuestion.textContent = q.hebrew;
             quizProgressEl.textContent = `שאלה ${quizCurrentIndex + 1} מתוך ${quizQuestions.length}`;
-            quizProgressBar.style.width = `${((quizCurrentIndex) / quizQuestions.length) * 100}%`;
 
-            quizSpeakBtn.onclick = () => speakText(q.hebrew, 'he-IL');
-
-            // Generate 4 multiple choice options
+            // Mix distractors
             let options = [q.arabic];
             let distractors = vocabulary.filter(v => v.arabic !== q.arabic).sort(() => 0.5 - Math.random()).slice(0, 3);
             distractors.forEach(d => options.push(d.arabic));
@@ -879,8 +630,8 @@
 
             options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-right bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 p-3.5 rounded-xl text-base font-semibold text-slate-800 dark:text-slate-100 transition flex justify-between items-center active:scale-[0.99]";
-                btn.innerHTML = `<span>${opt}</span><i class="far fa-circle text-slate-300 dark:text-slate-600"></i>`;
+                btn.className = "w-full text-right bg-slate-50 hover:bg-slate-100 border border-slate-200 p-3.5 rounded-xl text-base font-semibold text-slate-700 transition flex justify-between items-center active:scale-[0.99]";
+                btn.innerHTML = `<span>${opt}</span><i class="far fa-circle text-slate-300"></i>`;
                 btn.onclick = () => selectQuizAnswer(btn, opt, q.arabic);
                 quizOptions.appendChild(btn);
             });
@@ -891,25 +642,24 @@
             allBtns.forEach(b => b.disabled = true);
 
             if (chosen === correct) {
-                btn.className = "w-full text-right bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-500 p-3.5 rounded-xl text-base font-bold text-emerald-800 dark:text-emerald-200 flex justify-between items-center";
-                btn.querySelector('i').className = "fas fa-check-circle text-emerald-600 dark:text-emerald-400";
+                btn.className = "w-full text-right bg-emerald-50 border-2 border-emerald-500 p-3.5 rounded-xl text-base font-bold text-emerald-800 flex justify-between items-center";
+                btn.querySelector('i').className = "fas fa-check-circle text-emerald-600";
                 quizFeedback.textContent = "כל הכבוד! תשובה נכונה ✨";
-                quizFeedback.className = "text-center font-bold text-sm min-h-[28px] mb-4 text-emerald-600 dark:text-emerald-400";
+                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-emerald-600";
                 quizScore += 10;
                 quizScoreEl.textContent = `ניקוד: ${quizScore}`;
-                speakText(correct, 'he-IL');
             } else {
-                btn.className = "w-full text-right bg-rose-50 dark:bg-rose-950/60 border-2 border-rose-500 p-3.5 rounded-xl text-base font-bold text-rose-800 dark:text-rose-200 flex justify-between items-center";
-                btn.querySelector('i').className = "fas fa-times-circle text-rose-600 dark:text-rose-400";
+                btn.className = "w-full text-right bg-rose-50 border-2 border-rose-500 p-3.5 rounded-xl text-base font-bold text-rose-800 flex justify-between items-center";
+                btn.querySelector('i').className = "fas fa-times-circle text-rose-600";
 
                 allBtns.forEach(b => {
                     if (b.textContent.trim() === correct) {
-                        b.className = "w-full text-right bg-emerald-50 dark:bg-emerald-950/60 border-2 border-emerald-400 p-3.5 rounded-xl text-base font-bold text-emerald-700 dark:text-emerald-300 flex justify-between items-center";
+                        b.className = "w-full text-right bg-emerald-50 border-2 border-emerald-400 p-3.5 rounded-xl text-base font-bold text-emerald-700 flex justify-between items-center";
                     }
                 });
 
-                quizFeedback.textContent = `תשובה לא מדויקת. הנכון הוא: ${correct}`;
-                quizFeedback.className = "text-center font-bold text-sm min-h-[28px] mb-4 text-rose-600 dark:text-rose-400";
+                quizFeedback.textContent = `לא מדויק, התשובה הנכונה היא: ${correct}`;
+                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-rose-600";
             }
 
             quizNextBtn.classList.remove('hidden');
@@ -925,152 +675,109 @@
         });
 
         function finishQuiz() {
-            quizProgressBar.style.width = `100%`;
-            quizQuestion.textContent = "המבחן הושלם! 🎉";
+            quizQuestion.textContent = "המבחן הושלם!";
             quizOptions.innerHTML = `
                 <div class="text-center py-6">
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">הציון הסופי שלך:</p>
-                    <p class="text-5xl font-extrabold text-teal-700 dark:text-teal-300 mb-3">${quizScore}</p>
-                    <p class="text-xs text-slate-600 dark:text-slate-300">${quizScore >= 80 ? 'תוצאה מצוינת! שליטה מעולה בחומר!' : 'מומלץ לעבור שוב על הכרטיסיות ולתרגל.'}</p>
+                    <p class="text-sm text-slate-500 mb-1">הציון הסופי שלך:</p>
+                    <p class="text-5xl font-extrabold text-teal-700 mb-3">${quizScore}</p>
+                    <p class="text-xs text-slate-600">${quizScore >= 80 ? 'תוצאה מעולה! המשך כך!' : 'מומלץ לעבור שוב על הכרטיסיות ולתרגל.'}</p>
                 </div>
             `;
             quizFeedback.textContent = '';
             quizNextBtn.classList.add('hidden');
 
             const restartBtn = document.createElement('button');
-            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow transition text-sm";
+            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow transition text-sm";
             restartBtn.textContent = "התחל מבחן חדש";
             restartBtn.onclick = initQuiz;
             quizOptions.appendChild(restartBtn);
         }
 
-        // SPELLING / PRACTICE LOGIC
-        function initSpelling() {
-            spellingScore = 0;
-            spellingCurrentIndex = 0;
-            spellingScoreEl.textContent = `ניקוד: 0`;
+        // Matching Game Logic
+        function initMatchGame() {
+            selectedMatchCard = null;
+            matchedPairsCount = 0;
+            document.getElementById('match-win-msg').classList.add('hidden');
+            const grid = document.getElementById('match-grid');
+            grid.innerHTML = '';
 
-            const pool = filteredVocab.length >= 4 ? filteredVocab : vocabulary;
-            spellingQuestions = [...pool].sort(() => 0.5 - Math.random()).slice(0, 10);
+            const pool = filteredVocab.length >= 6 ? filteredVocab : vocabulary;
+            const selected = [...pool].sort(() => 0.5 - Math.random()).slice(0, 6);
 
-            renderSpellingStep();
+            let cardsData = [];
+            selected.forEach(item => {
+                cardsData.push({ id: item.id, text: item.hebrew, type: 'hebrew' });
+                cardsData.push({ id: item.id, text: item.arabic, type: 'arabic' });
+            });
+
+            cardsData.sort(() => 0.5 - Math.random());
+
+            cardsData.forEach(cardData => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 border-2 border-slate-200 rounded-2xl text-center font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 transition shadow-sm active:scale-95 text-sm sm:text-base flex items-center justify-center min-h-[70px]";
+                btn.textContent = cardData.text;
+                btn.dataset.id = cardData.id;
+                btn.dataset.type = cardData.type;
+
+                btn.onclick = () => handleMatchClick(btn);
+                grid.appendChild(btn);
+            });
         }
 
-        function renderSpellingStep() {
-            spellingFeedback.textContent = '';
-            spellingInput.value = '';
-            spellingInput.disabled = false;
-            spellingSubmitBtn.classList.remove('hidden');
-            spellingNextBtn.classList.add('hidden');
+        function handleMatchClick(btn) {
+            if (btn.classList.contains('bg-emerald-100') || btn.disabled) return;
 
-            const q = spellingQuestions[spellingCurrentIndex];
-            spellingQuestion.textContent = q.hebrew;
-            spellingCat.textContent = q.category;
-            spellingProgressEl.textContent = `שאלה ${spellingCurrentIndex + 1} מתוך ${spellingQuestions.length}`;
-
-            spellingSpeakBtn.onclick = () => speakText(q.hebrew, 'he-IL');
-            spellingInput.focus();
-        }
-
-        function normalizeText(text) {
-            return text.replace(/[\/'"\-\s]/g, '').toLowerCase();
-        }
-
-        spellingForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (spellingInput.disabled) return;
-
-            const q = spellingQuestions[spellingCurrentIndex];
-            const userInput = normalizeText(spellingInput.value.trim());
-            const correctAnswers = q.arabic.split('/').map(a => normalizeText(a.trim()));
-
-            spellingInput.disabled = true;
-            spellingSubmitBtn.classList.add('hidden');
-
-            const isCorrect = correctAnswers.some(ans => userInput === ans || userInput.includes(ans) || ans.includes(userInput) && userInput.length > 1);
-
-            if (isCorrect && userInput.length > 0) {
-                spellingFeedback.textContent = "נכון מאוד! כל הכבוד 👏";
-                spellingFeedback.className = "text-center font-bold text-sm min-h-[36px] mb-4 text-emerald-600 dark:text-emerald-400";
-                spellingScore += 10;
-                spellingScoreEl.textContent = `ניקוד: ${spellingScore}`;
-                speakText(q.arabic, 'he-IL');
+            if (!selectedMatchCard) {
+                selectedMatchCard = btn;
+                btn.classList.remove('bg-slate-50', 'border-slate-200');
+                btn.classList.add('bg-teal-100', 'border-teal-500', 'text-teal-900');
+            } else if (selectedMatchCard === btn) {
+                btn.classList.remove('bg-teal-100', 'border-teal-500', 'text-teal-900');
+                btn.classList.add('bg-slate-50', 'border-slate-200');
+                selectedMatchCard = null;
             } else {
-                spellingFeedback.textContent = `לא מדויק. התשובה היא: ${q.arabic}`;
-                spellingFeedback.className = "text-center font-bold text-sm min-h-[36px] mb-4 text-rose-600 dark:text-rose-400";
+                const card1 = selectedMatchCard;
+                const card2 = btn;
+
+                if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
+                    // Match Success
+                    [card1, card2].forEach(c => {
+                        c.className = "p-4 border-2 border-emerald-500 rounded-2xl text-center font-bold text-emerald-800 bg-emerald-100 transition shadow-sm text-sm sm:text-base flex items-center justify-center min-h-[70px]";
+                        c.disabled = true;
+                    });
+                    matchedPairsCount++;
+                    selectedMatchCard = null;
+
+                    if (matchedPairsCount === 6) {
+                        document.getElementById('match-win-msg').classList.remove('hidden');
+                    }
+                } else {
+                    // Match Fail
+                    card2.classList.add('bg-rose-100', 'border-rose-500');
+                    setTimeout(() => {
+                        [card1, card2].forEach(c => {
+                            c.className = "p-4 border-2 border-slate-200 rounded-2xl text-center font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 transition shadow-sm active:scale-95 text-sm sm:text-base flex items-center justify-center min-h-[70px]";
+                        });
+                        selectedMatchCard = null;
+                    }, 500);
+                }
             }
-
-            spellingNextBtn.classList.remove('hidden');
-        });
-
-        spellingNextBtn.addEventListener('click', () => {
-            spellingCurrentIndex++;
-            if (spellingCurrentIndex < spellingQuestions.length) {
-                renderSpellingStep();
-            } else {
-                finishSpelling();
-            }
-        });
-
-        function finishSpelling() {
-            spellingQuestion.textContent = "התרגול הושלם!";
-            spellingCat.textContent = "-";
-            spellingForm.classList.add('hidden');
-            spellingFeedback.innerHTML = `
-                <div class="text-center py-4">
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">ציון סופי:</p>
-                    <p class="text-5xl font-extrabold text-teal-700 dark:text-teal-300 mb-3">${spellingScore}</p>
-                </div>
-            `;
-            spellingNextBtn.classList.add('hidden');
-
-            const restartBtn = document.createElement('button');
-            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow transition text-sm mt-2";
-            restartBtn.textContent = "התחל תרגול חדש";
-            restartBtn.onclick = () => {
-                spellingForm.classList.remove('hidden');
-                initSpelling();
-            };
-            spellingFeedback.appendChild(restartBtn);
         }
 
-        // DARK MODE TOGGLE LOGIC
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            
-            const iconClass = isDark ? 'fas fa-sun text-amber-300' : 'fas fa-moon text-amber-300';
-            document.getElementById('theme-icon').className = iconClass;
-            document.getElementById('theme-icon-mobile').className = iconClass;
-        }
+        document.getElementById('restart-match-btn').addEventListener('click', initMatchGame);
 
-        themeToggleBtn.addEventListener('click', toggleDarkMode);
-        themeToggleMobileBtn.addEventListener('click', toggleDarkMode);
-
-        // Check theme on load
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-icon').className = 'fas fa-sun text-amber-300';
-            document.getElementById('theme-icon-mobile').className = 'fas fa-sun text-amber-300';
-        }
-
-        // KEYBOARD NAVIGATION CONTROL
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            // Ignore keypresses inside input fields
-            if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-
             if (!sectionFlashcards.classList.contains('hidden')) {
                 if (e.key === 'ArrowRight') prevBtn.click();
                 if (e.key === 'ArrowLeft') nextBtn.click();
-                if (e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    cardContainer.click();
-                }
+                if (e.key === ' ') cardContainer.click();
             }
         });
 
-        // Initialize Application
-        updateFlashcard();
+        // Initialize App
+        updateCategoryOptions();
+        applyFilters();
     </script>
 </body>
 </html>
