@@ -28,6 +28,9 @@
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
 
+    <!-- Hidden Audio Player for Unlocking Browser Audio Policy -->
+    <audio id="app-audio-player" class="hidden" preload="auto"></audio>
+
     <!-- Header -->
     <header class="bg-teal-700 text-white shadow-md p-4 sticky top-0 z-50">
         <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
@@ -36,11 +39,12 @@
                     <i class="fas fa-book-open text-2xl text-teal-200"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold">אוצר מילים: עברית - ערבית</h1>
-                    <p class="text-xs text-teal-200">ערבית מדוברת • תרגול, שינון ומשחקים</p>
-                </div>
+                <h1 class="text-xl font-bold">אוצר מילים: עברית - ערבית</h1>
+                <p class="text-xs text-teal-200">ערבית מדוברת • תרגול, שינון ומשחקים</p>
             </div>
-            
+        </div>
+        
+        <div class="flex items-center gap-2">
             <!-- Navigation Modes -->
             <div class="flex flex-wrap justify-center bg-teal-800/60 p-1 rounded-xl gap-1 border border-teal-600/50">
                 <button id="mode-flashcards" class="bg-white text-teal-900 font-semibold px-3 py-1.5 rounded-lg text-xs sm:text-sm transition shadow">
@@ -122,7 +126,8 @@
                         </div>
                         <div class="my-auto flex flex-col items-center gap-1.5">
                             <h2 id="card-arabic" class="text-3xl sm:text-4xl font-extrabold text-amber-300 tracking-wide">תעתיק</h2>
-                            <button id="speak-arabic-btn" class="mt-1 text-teal-200 hover:text-amber-300 transition p-1.5 text-xs bg-teal-900/50 rounded-full w-8 h-8 flex items-center justify-center">
+                            <p id="card-arabic-script" class="text-lg text-teal-200 font-serif" dir="rtl"></p>
+                            <button id="speak-arabic-btn" class="mt-1 text-teal-200 hover:text-amber-300 transition p-1.5 text-xs bg-teal-900/50 rounded-full w-8 h-8 flex items-center justify-center" title="השמע בערבית">
                                 <i class="fas fa-volume-high"></i>
                             </button>
                         </div>
@@ -156,26 +161,26 @@
                 
                 <!-- Header Status -->
                 <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                    <span id="quiz-progress" class="text-xs font-bold text-slate-400">שאלה 1 מתוך 10</span>
-                    <span id="quiz-score" class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">ניקוד: 0</span>
+                    <span id="quiz-progress" class="text-xs sm:text-sm font-bold text-slate-400">שאלה 1 מתוך 10</span>
+                    <span id="quiz-score" class="text-xs sm:text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">ניקוד: 0</span>
                 </div>
 
                 <!-- Question -->
                 <div class="text-center mb-6">
-                    <span class="text-xs text-slate-400 font-medium">איך אומרים בערבית:</span>
-                    <h2 id="quiz-question" class="text-3xl font-extrabold text-slate-800 mt-1">מילה</h2>
+                    <span class="text-xs sm:text-sm text-slate-400 font-medium">איך אומרים בערבית:</span>
+                    <h2 id="quiz-question" class="text-3xl sm:text-4xl font-extrabold text-slate-800 mt-2">מילה</h2>
                 </div>
 
                 <!-- Answer Options -->
-                <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6">
+                <div id="quiz-options" class="grid grid-cols-1 gap-3.5 mb-6">
                     <!-- Options injected here -->
                 </div>
 
                 <!-- Feedback Message -->
-                <div id="quiz-feedback" class="text-center font-bold text-sm min-h-[24px] mb-4"></div>
+                <div id="quiz-feedback" class="text-center font-bold text-sm sm:text-base min-h-[28px] mb-4"></div>
 
                 <!-- Next Question Button -->
-                <button id="quiz-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow-md transition hidden">
+                <button id="quiz-next-btn" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow-md transition text-base hidden">
                     לשאלה הבאה <i class="fas fa-arrow-left mr-2"></i>
                 </button>
             </div>
@@ -183,22 +188,25 @@
 
         <!-- Matching Game Section -->
         <section id="section-match" class="hidden flex flex-col items-center">
-            <div class="w-full max-w-2xl bg-white rounded-3xl shadow-md border border-slate-200 p-6">
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-base">משחק התאמה: חבר בין המילים למשמעותן</h3>
-                    <button id="restart-match-btn" class="text-xs font-semibold bg-teal-50 text-teal-700 px-3 py-1.5 rounded-lg border border-teal-200 hover:bg-teal-100 transition">
-                        <i class="fas fa-rotate-right ml-1"></i> משחק חדש
+            <div class="w-full max-w-2xl bg-white rounded-3xl shadow-md border border-slate-200 p-5 sm:p-7">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-5 pb-4 border-b border-slate-100">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg">משחק התאמה</h3>
+                        <p class="text-xs text-slate-500">לחץ על מילה בעברית ולאחר מכן על תרגומה בערבית</p>
+                    </div>
+                    <button id="restart-match-btn" class="w-full sm:w-auto text-xs sm:text-sm font-semibold bg-teal-50 text-teal-700 px-4 py-2 rounded-xl border border-teal-200 hover:bg-teal-100 transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fas fa-rotate-right"></i> משחק חדש
                     </button>
                 </div>
                 
-                <div id="match-grid" class="grid grid-cols-2 gap-3 mb-4">
+                <div id="match-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
                     <!-- Cards injected here -->
                 </div>
 
-                <div id="match-win-msg" class="hidden text-center py-6 bg-emerald-50 rounded-2xl border border-emerald-200">
+                <div id="match-win-msg" class="hidden text-center py-6 bg-emerald-50 rounded-2xl border-2 border-emerald-300 shadow-sm animate-fade-in">
                     <i class="fas fa-trophy text-4xl text-amber-500 mb-2"></i>
-                    <h4 class="text-xl font-bold text-emerald-800 mb-1">כל הכבוד!</h4>
-                    <p class="text-xs text-emerald-600">הצלחת להתאים את כל המילים בהצלחה!</p>
+                    <h4 class="text-2xl font-bold text-emerald-800 mb-1">כל הכבוד! כל הכבוד!</h4>
+                    <p class="text-sm text-emerald-700 font-medium">הצלחת להתאים את כל המילים בהצלחה!</p>
                 </div>
             </div>
         </section>
@@ -211,9 +219,8 @@
                         <thead class="bg-slate-50 text-slate-500 font-semibold sticky top-0 border-b border-slate-200">
                             <tr>
                                 <th class="p-3.5">עברית</th>
-                                <th class="p-3.5">ערבית (תעתיק)</th>
+                                <th class="p-3.5">תעתיק בערבית</th>
                                 <th class="p-3.5">נושא</th>
-                                <th class="p-3.5 text-center">השמעה</th>
                             </tr>
                         </thead>
                         <tbody id="vocab-table-body" class="divide-y divide-slate-100">
@@ -232,145 +239,164 @@
     </footer>
 
     <script>
-        // Default Vocabulary Database
-        const initialVocabulary = [
+        // Full Vocabulary Database with Hebrew, Transliteration, Category, and Arabic Script
+        const vocabulary = [
             // מילות תואר
-            { id: 1, hebrew: "בחוץ", arabic: "ברא", category: "מילות תואר" },
-            { id: 2, hebrew: "בפנים", arabic: "ג'נא", category: "מילות תואר" },
-            { id: 3, hebrew: "גדול", arabic: "כביר / ח'תיאר", category: "מילות תואר" },
-            { id: 4, hebrew: "חולה", arabic: "מריד / עיאן", category: "מילות תואר" },
-            { id: 5, hebrew: "חדש", arabic: "ג'דיד", category: "מילות תואר" },
-            { id: 6, hebrew: "חזק", arabic: "קוי", category: "מילות תואר" },
-            { id: 7, hebrew: "חלש", arabic: "דעיף", category: "מילות תואר" },
-            { id: 8, hebrew: "טוב / בסדר", arabic: "מאשי / כויס", category: "מילות תואר" },
-            { id: 9, hebrew: "יותר טוב / מוטב", arabic: "אחסן", category: "מילות תואר" },
-            { id: 10, hebrew: "מהר", arabic: "קואם / בסרעה", category: "מילות תואר" },
-            { id: 11, hebrew: "יפה", arabic: "חלו", category: "מילות תואר" },
-            { id: 12, hebrew: "מסכן / עני", arabic: "מסכין", category: "מילות תואר" },
-            { id: 13, hebrew: "מרוצה / מרגיש טוב", arabic: "מבסוט", category: "מילות תואר" },
-            { id: 14, hebrew: "נמוך", arabic: "קציר", category: "מילות תואר" },
-            { id: 15, hebrew: "עייף", arabic: "תעבאן", category: "מילות תואר" },
-            { id: 16, hebrew: "עסוק", arabic: "משע'ול", category: "מילות תואר" },
-            { id: 17, hebrew: "פיקח / זריז", arabic: "שאטר", category: "מילות תואר" },
-            { id: 18, hebrew: "קטן", arabic: "זע'יר / צע'יר", category: "מילות תואר" },
-            { id: 19, hebrew: "קל", arabic: "הין", category: "מילות תואר" },
-            { id: 20, hebrew: "קצת / מעט", arabic: "שוי / קליל", category: "מילות תואר" },
-            { id: 21, hebrew: "קר", arabic: "ברד", category: "מילות תואר" },
-            { id: 22, hebrew: "קשה", arabic: "צעב", category: "מילות תואר" },
-            { id: 23, hebrew: "רעב", arabic: "ג'ועאן", category: "מילות תואר" },
-            { id: 24, hebrew: "שמח", arabic: "סעיד", category: "מילות תואר" },
+            { hebrew: "בחוץ", arabic: "ברא", arabicText: "برّا", category: "מילות תואר" },
+            { hebrew: "בפנים", arabic: "ג'וא", arabicText: "جوّا", category: "מילות תואר" },
+            { hebrew: "גדול", arabic: "כביר / ח'תיאר", arabicText: "كبير / ختيار", category: "מילות תואר" },
+            { hebrew: "חולה", arabic: "מריד / עיאן", arabicText: "مريض / عيان", category: "מילות תואר" },
+            { hebrew: "חדש", arabic: "ג'דיד", arabicText: "جديد", category: "מילות תואר" },
+            { hebrew: "חזק", arabic: "קוי", arabicText: "قوي", category: "מילות תואר" },
+            { hebrew: "חלש", arabic: "דעיף", arabicText: "ضعيف", category: "מילות תואר" },
+            { hebrew: "טוב / בסדר", arabic: "מאשי / כויס", arabicText: "ماشي / كويس", category: "מילות תואר" },
+            { hebrew: "יותר טוב / מוטב", arabic: "אחסן", arabicText: "أحسن", category: "מילות תואר" },
+            { hebrew: "מהר", arabic: "קואם / בסרעה", arabicText: "قوام / بسرعة", category: "מילות תואר" },
+            { hebrew: "יפה", arabic: "חלו", arabicText: "חלו", category: "מילות תואר" },
+            { hebrew: "מסכן / עני", arabic: "מסכין", arabicText: "مسكين", category: "מילות תואר" },
+            { hebrew: "מרוצה / מרגיש טוב", arabic: "מבסוט", arabicText: "مبسوط", category: "מילות תואר" },
+            { hebrew: "נמוך / קצר", arabic: "קציר", arabicText: "قصير", category: "מילות תואר" },
+            { hebrew: "עייף", arabic: "תעבאן", arabicText: "تعبان", category: "מילות תואר" },
+            { hebrew: "עסוק", arabic: "משע'ול", arabicText: "مشغول", category: "מילות תואר" },
+            { hebrew: "פיקח / זריז", arabic: "שאטר", arabicText: "شاطر", category: "מילות תואר" },
+            { hebrew: "קטן", arabic: "זע'יר / צע'יר", arabicText: "صغير", category: "מילות תואר" },
+            { hebrew: "קל", arabic: "הין / סהל", arabicText: "هيّن / سهل", category: "מילות תואר" },
+            { hebrew: "קצת / מעט", arabic: "שוי / קליל", arabicText: "شوي / قليل", category: "מילות תואר" },
+            { hebrew: "קר", arabic: "ברד", arabicText: "برد", category: "מילות תואר" },
+            { hebrew: "קשה", arabic: "צעב", arabicText: "صعب", category: "מילות תואר" },
+            { hebrew: "רעב", arabic: "ג'ועאן", arabicText: "جوعان", category: "מילות תואר" },
+            { hebrew: "שמח", arabic: "סעיד / פרחאן", arabicText: "سعيد / فرحان", category: "מילות תואר" },
+            { hebrew: "רחוק", arabic: "בעיד", arabicText: "بعيد", category: "מילות תואר" },
+            { hebrew: "קרוב", arabic: "קריב", arabicText: "قريب", category: "מילות תואר" },
+            { hebrew: "חם", arabic: "שוב / שובאן", arabicText: "شوب", category: "מילות תואר" },
+            { hebrew: "נקי", arabic: "נז'יף", arabicText: "نظيف", category: "מילות תואר" },
+            { hebrew: "מלוכלך", arabic: "וסח' / אוסח'", arabicText: "وسخ", category: "מילות תואר" },
 
             // משפחה
-            { id: 25, hebrew: "אבא / אבי", arabic: "באבא / אבוי", category: "משפחה" },
-            { id: 26, hebrew: "את", arabic: "אה", category: "משפחה" },
-            { id: 27, hebrew: "אחות / אחיות", arabic: "אח'ת / ח'ואת", category: "משפחה" },
-            { id: 28, hebrew: "אחים", arabic: "אח'וה", category: "משפחה" },
-            { id: 29, hebrew: "אמא / אימי", arabic: "מאמא / אם / אימי", category: "משפחה" },
-            { id: 30, hebrew: "בן", arabic: "אבן", category: "משפחה" },
-            { id: 31, hebrew: "בעל", arabic: "ג'וז", category: "משפחה" },
-            { id: 32, hebrew: "דוד (מצד האב)", arabic: "עם", category: "משפחה" },
-            { id: 33, hebrew: "דוד (מצד האם)", arabic: "ח'אל", category: "משפחה" },
-            { id: 34, hebrew: "הורים / משפחה", arabic: "אהל / עילה", category: "משפחה" },
+            { hebrew: "אבא / אבי", arabic: "באבא / אבוי", arabicText: "بابا / أبوي", category: "משפחה" },
+            { hebrew: "אחות / אחיות", arabic: "אח'ת / ח'ואת", arabicText: "أخت / خوات", category: "משפחה" },
+            { hebrew: "אחים", arabic: "אח'וה", arabicText: "إخوة", category: "משפחה" },
+            { hebrew: "אמא / אימי", arabic: "מאמא / אם / אימי", arabicText: "ماما / أمي", category: "משפחה" },
+            { hebrew: "בן", arabic: "אבן", arabicText: "ابن", category: "משפחה" },
+            { hebrew: "בת", arabic: "בנת", arabicText: "بنت", category: "משפחה" },
+            { hebrew: "בעל", arabic: "ג'וז", arabicText: "جوز", category: "משפחה" },
+            { hebrew: "אישה (רעיה)", arabic: "מרה / זוג'ה", arabicText: "مرت / زوجة", category: "משפחה" },
+            { hebrew: "דוד (מצד האב)", arabic: "עם", arabicText: "عم", category: "משפחה" },
+            { hebrew: "דוד (מצד האם)", arabic: "ח'אל", arabicText: "خال", category: "משפחה" },
+            { hebrew: "הורים / משפחה", arabic: "אהל / עילה", arabicText: "أهل / عيلة", category: "משפחה" },
+            { hebrew: "סבא", arabic: "סידו / ג'ד", arabicText: "سيدو / جد", category: "משפחה" },
+            { hebrew: "סבתא", arabic: "תיתא / ג'דה", arabicText: "تيتا / جدة", category: "משפחה" },
 
             // פעלים
-            { id: 35, hebrew: "אכל", arabic: "אכל", category: "פעלים" },
-            { id: 36, hebrew: "אמר", arabic: "קאל", category: "פעלים" },
-            { id: 37, hebrew: "בוא", arabic: "תעאל", category: "פעלים" },
-            { id: 38, hebrew: "ביקר", arabic: "זאר", category: "פעלים" },
-            { id: 39, hebrew: "ביקש", arabic: "טלב", category: "פעלים" },
-            { id: 40, hebrew: "בישל", arabic: "טבח", category: "פעלים" },
-            { id: 41, hebrew: "גר / גרה", arabic: "סאכן / סאכנה", category: "פעלים" },
-            { id: 42, hebrew: "הביא", arabic: "ג'אב", category: "פעלים" },
-            { id: 43, hebrew: "הבין", arabic: "פהם", category: "פעלים" },
-            { id: 44, hebrew: "הזיז", arabic: "זאח", category: "פעלים" },
-            { id: 45, hebrew: "היה", arabic: "כאן", category: "פעלים" },
-            { id: 46, hebrew: "היכה / הרביץ", arabic: "דרב", category: "פעלים" },
-            { id: 47, hebrew: "הלך", arabic: "ראח", category: "פעלים" },
-            { id: 48, hebrew: "הלך הביתה", arabic: "רוח", category: "פעלים" },
-            { id: 49, hebrew: "הרג", arabic: "קתל", category: "פעלים" },
-            { id: 50, hebrew: "ידע", arabic: "ערף", category: "פעלים" },
-            { id: 51, hebrew: "יצא", arabic: "טלע", category: "פעלים" },
-            { id: 52, hebrew: "לקח / קיבל", arabic: "אח'ד", category: "פעלים" },
-            { id: 53, hebrew: "כתב", arabic: "כתב", category: "פעלים" },
-            { id: 54, hebrew: "עבר", arabic: "מרק", category: "פעלים" },
-            { id: 55, hebrew: "עזב / נטש", arabic: "תרכ", category: "פעלים" },
-            { id: 56, hebrew: "פתח", arabic: "פתח", category: "פעלים" },
-            { id: 57, hebrew: "קרה / נהיה", arabic: "צאר", category: "פעלים" },
-            { id: 58, hebrew: "ראה", arabic: "שאפ", category: "פעלים" },
-            { id: 59, hebrew: "שאל", arabic: "סאל", category: "פעלים" },
-            { id: 60, hebrew: "שבר", arabic: "כסר", category: "פעלים" },
-            { id: 61, hebrew: "שילם", arabic: "דפע", category: "פעלים" },
-            { id: 62, hebrew: "שמע", arabic: "סמע", category: "פעלים" },
-            { id: 63, hebrew: "שתה", arabic: "שרב", category: "פעלים" },
-            { id: 64, hebrew: "שתק", arabic: "סכת", category: "פעלים" },
+            { hebrew: "אכל", arabic: "אכל", arabicText: "أكل", category: "פעלים" },
+            { hebrew: "אמר", arabic: "קאל", arabicText: "قال", category: "פעלים" },
+            { hebrew: "בוא", arabic: "תעאל", arabicText: "تعال", category: "פעלים" },
+            { hebrew: "ביקר", arabic: "זאר", arabicText: "زار", category: "פעלים" },
+            { hebrew: "ביקש", arabic: "טלב", arabicText: "طلب", category: "פעלים" },
+            { hebrew: "בישל", arabic: "טבח", arabicText: "طبخ", category: "פעלים" },
+            { hebrew: "גר / גרה", arabic: "סאכן / סאכנה", arabicText: "ساكن / ساكنة", category: "פעלים" },
+            { hebrew: "הביא", arabic: "ג'אב", arabicText: "جاب", category: "פעלים" },
+            { hebrew: "הבין", arabic: "פהם", arabicText: "فهم", category: "פעלים" },
+            { hebrew: "היה", arabic: "כאן", arabicText: "كان", category: "פעלים" },
+            { hebrew: "הלך", arabic: "ראח", arabicText: "راح", category: "פעלים" },
+            { hebrew: "ידע", arabic: "ערף", arabicText: "عرف", category: "פעלים" },
+            { hebrew: "יצא", arabic: "טלע", arabicText: "طلع", category: "פעלים" },
+            { hebrew: "לקח / קיבל", arabic: "אח'ד", arabicText: "أخد", category: "פעלים" },
+            { hebrew: "כתב", arabic: "כתב", arabicText: "كتب", category: "פעלים" },
+            { hebrew: "פתח", arabic: "פתח", arabicText: "فتح", category: "פעלים" },
+            { hebrew: "ראה", arabic: "שאפ", arabicText: "شاف", category: "פעלים" },
+            { hebrew: "שאל", arabic: "סאל", arabicText: "سأل", category: "פעלים" },
+            { hebrew: "שמע", arabic: "סמע", arabicText: "سمع", category: "פעלים" },
+            { hebrew: "שתה", arabic: "שרב", arabicText: "شرب", category: "פעלים" },
+            { hebrew: "רוצה", arabic: "בדי", arabicText: "بدي", category: "פעלים" },
+            { hebrew: "יכול / אפשר", arabic: "ביקדר / ממכן", arabicText: "بقدر / ممكن", category: "פעלים" },
+            { hebrew: "עובד", arabic: "בישתע'ל", arabicText: "بيشتغل", category: "פעלים" },
 
             // ברכות / ביטויים
-            { id: 65, hebrew: "תשובה לאהלן וסהלן", arabic: "אהלין בכ / אהלין", category: "ברכות / ביטויים" },
-            { id: 66, hebrew: "השבח לאל", arabic: "אלחמדיללה", category: "ברכות / ביטויים" },
-            { id: 67, hebrew: "אלוהים יברך אותך", arabic: "אללה יבארכ פיכ / אללה יופק", category: "ברכות / ביטויים" },
-            { id: 68, hebrew: "אלוהים ינעים לך", arabic: "אללה ינעם עליכ", category: "ברכות / ביטויים" },
-            { id: 69, hebrew: "תודה (תשובה לאיחול)", arabic: "אללה יסלמכ", category: "ברכות / ביטויים" },
-            { id: 70, hebrew: "אלוהים ישמור", arabic: "אללה יסתר", category: "ברכות / ביטויים" },
-            { id: 71, hebrew: "ברכת שלום", arabic: "אסלאם עליכם", category: "ברכות / ביטויים" },
-            { id: 72, hebrew: "שנה טובה", arabic: "כל עאם ואנתו בח'יר", category: "ברכות / ביטויים" },
-            { id: 73, hebrew: "פניה מנומסת (בבקשה)", arabic: "לו סמחת", category: "ברכות / ביטויים" },
-            { id: 74, hebrew: "חס וחלילה", arabic: "מא סמח אללה", category: "ברכות / ביטויים" },
-            { id: 75, hebrew: "להתראות", arabic: "מע סלאמה", category: "ברכות / ביטויים" },
-            { id: 76, hebrew: "תשובה למרחבא", arabic: "מרחבתין / הלא / אהלין", category: "ברכות / ביטויים" },
-            { id: 77, hebrew: "סלאמתכ (לבריאות)", arabic: "סלאמתכ", category: "ברכות / ביטויים" },
-            { id: 78, hebrew: "נעים מאוד", arabic: "פרצה סעידה", category: "ברכות / ביטויים" },
-            { id: 79, hebrew: "לכבוד הוא לי", arabic: "תשרפנא", category: "ברכות / ביטויים" },
+            { hebrew: "שלום", arabic: "מרחבא / אסלאם עליכם", arabicText: "مرحبا / السلام عليكم", category: "ברכות / ביטויים" },
+            { hebrew: "מה שלומך?", arabic: "כיפאכ (ז) / כיפיכ (נ)", arabicText: "كيفك", category: "ברכות / ביטויים" },
+            { hebrew: "השבח לאל", arabic: "אלחמדיללה", arabicText: "الحمد لله", category: "ברכות / ביטויים" },
+            { hebrew: "תודה", arabic: "שוכראן", arabicText: "شكراً", category: "ברכות / ביטויים" },
+            { hebrew: "בבקשה / אהלן", arabic: "עפואן / תפדל", arabicText: "عفواً / تفضل", category: "ברכות / ביטויים" },
+            { hebrew: "להתראות", arabic: "מע סלאמה", arabicText: "مع السلامة", category: "ברכות / ביטויים" },
+            { hebrew: "נעים מאוד", arabic: "פרצה סעידה", arabicText: "فرصة سعيدة", category: "ברכות / ביטויים" },
+            { hebrew: "אין בעיה", arabic: "מא פיה משכלה", arabicText: "ما فيه مشكلة", category: "ברכות / ביטויים" },
+            { hebrew: "אל תדאג", arabic: "ולא יהמכ", arabicText: "ولا يهمك", category: "ברכות / ביטויים" },
+            { hebrew: "בוקר טוב", arabic: "צבאר אלח'יר", arabicText: "صباح الخير", category: "ברכות / ביטויים" },
+            { hebrew: "ערב טוב", arabic: "מכסא אלח'יר", arabicText: "مساء الخير", category: "ברכות / ביטויים" },
 
             // מילות יחס וקישור
-            { id: 80, hebrew: "אבל / רק", arabic: "בס", category: "מילות יחס וקישור" },
-            { id: 81, hebrew: "או", arabic: "ואל", category: "מילות יחס וקישור" },
-            { id: 82, hebrew: "אולי / אין", arabic: "ימכן / ביג'וז / מא פיה", category: "מילות יחס וקישור" },
-            { id: 83, hebrew: "אלה / האלה", arabic: "הדול", category: "מילות יחס וקישור" },
-            { id: 84, hebrew: "אם", arabic: "אזא", category: "מילות יחס וקישור" },
-            { id: 85, hebrew: "אף אחד", arabic: "ולא חדא / מא חדא", category: "מילות יחס וקישור" },
-            { id: 86, hebrew: "אפשר", arabic: "ממכן", category: "מילות יחס וקישור" },
-            { id: 87, hebrew: "אצל", arabic: "ענד", category: "מילות יחס וקישור" },
-            { id: 88, hebrew: "אשר / ש...", arabic: "אלי", category: "מילות יחס וקישור" },
-            { id: 89, hebrew: "באמת", arabic: "ען-ג'ד", category: "מילות יחס וקישור" },
-            { id: 90, hebrew: "בבקשה", arabic: "תפדל", category: "מילות יחס וקישור" },
-            { id: 91, hebrew: "בגלל", arabic: "עשאן / מנשאן", category: "מילות יחס וקישור" },
-            { id: 92, hebrew: "בלי", arabic: "בדון", category: "מילות יחס וקישור" },
-            { id: 93, hebrew: "בעצמי / בעצמך", arabic: "לחאלי / לחאלכ", category: "מילות יחס וקישור" },
-            { id: 94, hebrew: "גם / עוד", arabic: "כמאן", category: "מילות יחס וקישור" },
-            { id: 95, hebrew: "אחרי", arabic: "בעד", category: "מילות יחס וקישור" },
-            { id: 96, hebrew: "אחר-כך", arabic: "בעדין", category: "מילות יחס וקישור" },
-            { id: 97, hebrew: "אף פעם", arabic: "ולא מרה", category: "מילות יחס וקישור" },
-            { id: 98, hebrew: "אתמול", arabic: "מבירח", category: "מילות יחס וקישור" },
-            { id: 99, hebrew: "דווקא כן", arabic: "אמבלא", category: "מילות יחס וקישור" },
-            { id: 100, hebrew: "הזה / הזאת / האלה", arabic: "הל", category: "מילות יחס וקישור" },
+            { hebrew: "אבל / רק", arabic: "בס", arabicText: "بس", category: "מילות יחס וקישור" },
+            { hebrew: "או", arabic: "ואל / או", arabic: "أو", category: "מילות יחס וקישור" },
+            { hebrew: "אם", arabic: "אזא", arabicText: "إذا", category: "מילות יחס וקישור" },
+            { hebrew: "אצל", arabic: "ענד", arabicText: "عند", category: "מילות יחס וקישור" },
+            { hebrew: "בגלל", arabic: "עשאן / מנשאן", arabicText: "عشان / منشان", category: "מילות יחס וקישור" },
+            { hebrew: "בלי", arabic: "בדון", arabicText: "بدون", category: "מילות יחס וקישור" },
+            { hebrew: "גם / עוד", arabic: "כמאן", arabicText: "كمان", category: "מילות יחס וקישור" },
+            { hebrew: "אחרי", arabic: "בעד", arabicText: "بعد", category: "מילות יחס וקישור" },
+            { hebrew: "אתמול", arabic: "מבירח", arabicText: "مبارح", category: "מילות יחס וקישור" },
+            { hebrew: "הרבה", arabic: "כתיר", arabicText: "كتير", category: "מילות יחס וקישור" },
+            { hebrew: "זאת אומרת", arabic: "יעני", arabicText: "يعني", category: "מילות יחס וקישור" },
+            { hebrew: "יש / אין", arabic: "פיה / מא פיה", arabicText: "فيه / ما فيه", category: "מילות יחס וקישור" },
+
+            // מקומות ותחבורה
+            { hebrew: "בית", arabic: "בית / דאר", arabicText: "بيت / دار", category: "מקומות ותחבורה" },
+            { hebrew: "עיר / כפר", arabic: "מדינה / בלד", arabicText: "مدينة / بلد", category: "מקומות ותחבורה" },
+            { hebrew: "רחוב", arabic: "שארע", arabicText: "شارع", category: "מקומות ותחבורה" },
+            { hebrew: "שוק", arabic: "סוק", arabicText: "سوق", category: "מקומות ותחבורה" },
+            { hebrew: "חנות", arabic: "דכאן / מח'ל", arabicText: "دكان / محل", category: "מקומות ותחבורה" },
+            { hebrew: "בית ספר", arabic: "מדרסה", arabicText: "مدرسة", category: "מקומות ותחבורה" },
+            { hebrew: "בית חולים", arabic: "מסתשפא", arabicText: "مستشفى", category: "מקומות ותחבורה" },
+            { hebrew: "מכונית", arabic: "סיארה", arabicText: "سيارة", category: "מקומות ותחבורה" },
+            { hebrew: "אוטובוס", arabic: "באץ", arabicText: "باص", category: "מקומות ותחבורה" },
+            { hebrew: "מונית", arabic: "תכסי", arabicText: "تاكسي", category: "מקומות ותחבורה" },
+
+            // אוכל ומסעדה
+            { hebrew: "לחם", arabic: "ח'ובז", arabicText: "خبز", category: "אוכל ומסעדה" },
+            { hebrew: "מים", arabic: "מאי", arabicText: "ميّ", category: "אוכל ומסעדה" },
+            { hebrew: "קפה", arabic: "קהוה", arabicText: "قهوة", category: "אוכל ומסעדה" },
+            { hebrew: "תה", arabic: "שאי", arabicText: "شاي", category: "אוכל ומסעדה" },
+            { hebrew: "בשר", arabic: "לחמה", arabicText: "لحمة", category: "אוכל ומסעדה" },
+            { hebrew: "עוף", arabic: "ג'אג'", arabicText: "دجاج", category: "אוכל ומסעדה" },
+            { hebrew: "חלב", arabic: "חליב", arabicText: "حليب", category: "אוכל ומסעדה" },
+            { hebrew: "סוכר", arabic: "סכר", arabicText: "سكر", category: "אוכל ומסעדה" },
+            { hebrew: "חשבון", arabic: "חסאב", arabicText: "حساب", category: "אוכל ומסעדה" },
+
+            // זמן ותאריכים
+            { hebrew: "עכשיו", arabic: "הללֹא / הסא", arabicText: "هلق / هسّة", category: "זמן ותאריכים" },
+            { hebrew: "היום", arabic: "אליום", arabicText: "اليوم", category: "זמן ותאריכים" },
+            { hebrew: "מחר", arabic: "בכרה", arabicText: "بكرة", category: "זמן ותאריכים" },
+            { hebrew: "בוקר", arabic: "צבאל", arabicText: "صباح", category: "זמן ותאריכים" },
+            { hebrew: "ערב", arabic: "מכסא", arabicText: "مساء", category: "זמן ותאריכים" },
+            { hebrew: "לילה", arabic: "ליל", arabicText: "ليل", category: "זמן ותאריכים" },
+            { hebrew: "שעה", arabic: "סאעה", arabicText: "ساعة", category: "זמן ותאריכים" },
+            { hebrew: "שבוע", arabic: "אסבוע", arabicText: "أسبوع", category: "זמן ותאריכים" },
+            { hebrew: "חודש", arabic: "שהר", arabicText: "شهر", category: "זמן ותאריכים" },
+            { hebrew: "שנה", arabic: "סנה", arabicText: "سنة", category: "זמן ותאריכים" },
 
             // מילות שאלה
-            { id: 101, hebrew: "איך", arabic: "כיף", category: "מילות שאלה" },
-            { id: 102, hebrew: "איפה", arabic: "וין", category: "מילות שאלה" },
-            { id: 103, hebrew: "כמה (ספיר)", arabic: "כם", category: "מילות שאלה" },
-            { id: 104, hebrew: "כמה (לא ספיר)", arabic: "קדיש", category: "מילות שאלה" },
-            { id: 105, hebrew: "למה", arabic: "ליש", category: "מילות שאלה" },
-            { id: 106, hebrew: "מה", arabic: "שו / איש", category: "מילות שאלה" },
-            { id: 107, hebrew: "מי", arabic: "מין", category: "מילות שאלה" },
-            { id: 108, hebrew: "מתי", arabic: "אמתא", category: "מילות שאלה" }
+            { hebrew: "איך", arabic: "כיף", arabicText: "كيف", category: "מילות שאלה" },
+            { hebrew: "איפה", arabic: "וין", arabicText: "وين", category: "מילות שאלה" },
+            { hebrew: "כמה (ספיר)", arabic: "כם", arabicText: "كم", category: "מילות שאלה" },
+            { hebrew: "כמה (לא ספיר)", arabic: "קדיש", arabicText: "قديش", category: "מילות שאלה" },
+            { hebrew: "למה", arabic: "ליש", arabicText: "ليش", category: "מילות שאלה" },
+            { hebrew: "מה", arabic: "שו / איש", arabicText: "شو / ايش", category: "מילות שאלה" },
+            { hebrew: "מי", arabic: "מין", arabicText: "مين", category: "מילות שאלה" },
+            { hebrew: "מתי", arabic: "אמתא", arabicText: "إمتى", category: "מילות שאלה" }
         ];
 
-        // Load vocabulary from LocalStorage or default
-        let vocabulary = JSON.parse(localStorage.getItem('user_vocab')) || [...initialVocabulary];
-        let savedWordIds = JSON.parse(localStorage.getItem('saved_word_ids')) || [];
-
-        // State Variables
+        // Saved Words System State
+        let savedWords = JSON.parse(localStorage.getItem('savedVocabWords') || '[]');
         let filteredVocab = [...vocabulary];
         let currentIndex = 0;
         let quizScore = 0;
         let quizCurrentIndex = 0;
         let quizQuestions = [];
-        
-        // Matching game state
-        let selectedMatchCard = null;
-        let matchedPairsCount = 0;
+        let matchSelectedCard = null;
+        let matchMatchesFound = 0;
 
-        // DOM Elements
+        // Audio & DOM References
+        const audioPlayer = document.getElementById('app-audio-player');
         const categorySelect = document.getElementById('category-select');
         const searchInput = document.getElementById('search-input');
 
@@ -388,12 +414,15 @@
         const card = document.getElementById('card');
         const cardHebrew = document.getElementById('card-hebrew');
         const cardArabic = document.getElementById('card-arabic');
+        const cardArabicScript = document.getElementById('card-arabic-script');
         const cardCatFront = document.getElementById('card-cat-front');
         const cardCatBack = document.getElementById('card-cat-back');
         const cardCounter = document.getElementById('card-counter');
         const cardCategoryBadge = document.getElementById('card-category-badge');
         const starBtn = document.getElementById('star-btn');
-        
+        const speakHebrewBtn = document.getElementById('speak-hebrew-btn');
+        const speakArabicBtn = document.getElementById('speak-arabic-btn');
+
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const randomBtn = document.getElementById('random-btn');
@@ -407,21 +436,106 @@
         const quizProgressEl = document.getElementById('quiz-progress');
         const quizNextBtn = document.getElementById('quiz-next-btn');
 
-        // Speech Synthesis Helper
-        function speakText(text, lang = 'he-IL') {
+        const matchGrid = document.getElementById('match-grid');
+        const matchWinMsg = document.getElementById('match-win-msg');
+        const restartMatchBtn = document.getElementById('restart-match-btn');
+
+        // Helper animation for audio buttons
+        function animateAudioButton(btnElement) {
+            if (!btnElement) return;
+            btnElement.classList.add('scale-110', 'text-amber-400');
+            setTimeout(() => {
+                btnElement.classList.remove('scale-110', 'text-amber-400');
+            }, 400);
+        }
+
+        // Jordanian / Levantine Speech Engine Adaptation
+        function speakArabic(textInArabicScript, btnElement) {
+            if (!textInArabicScript) return;
+            if (btnElement) animateAudioButton(btnElement);
+
+            // Audio Unlock activation
             if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang;
+            }
+
+            // Clean string for TTS
+            const cleanText = textInArabicScript.replace(/[\/]/g, ' ').trim();
+
+            // Try browser Web Speech API first
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                const voices = window.speechSynthesis.getVoices();
+                const jordanianVoice = voices.find(v => 
+                    v.lang === 'ar-JO' || v.lang === 'ar-IL' || v.lang === 'ar-SY' || v.lang.startsWith('ar')
+                );
+
+                if (jordanianVoice) {
+                    utterance.voice = jordanianVoice;
+                }
+
+                utterance.lang = 'ar-JO';
+                utterance.rate = 0.82;
+
+                let isSpeaking = false;
+                utterance.onstart = () => { isSpeaking = true; };
+
+                window.speechSynthesis.speak(utterance);
+
+                // Fallback to Online Audio Stream if synthesis doesn't trigger audio sound within 200ms
+                setTimeout(() => {
+                    if (!isSpeaking) {
+                        playOnlineAudio(cleanText);
+                    }
+                }, 200);
+            } else {
+                playOnlineAudio(cleanText);
+            }
+        }
+
+        function playOnlineAudio(text) {
+            if (!audioPlayer) return;
+            const encoded = encodeURIComponent(text);
+            audioPlayer.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded}&tl=ar-JO&client=tw-ob`;
+            audioPlayer.play().catch(err => console.log("Audio unlock required on touch", err));
+        }
+
+        function speakHebrew(textInHebrew, btnElement) {
+            if (!textInHebrew) return;
+            if (btnElement) animateAudioButton(btnElement);
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(textInHebrew);
+                utterance.lang = 'he-IL';
+                utterance.rate = 0.85;
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Populate Categories Select
+        // Global User Interaction Listener to Unlock Audio Context
+        function unlockAudioEngine() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
+            }
+            if (audioPlayer) {
+                audioPlayer.play().then(() => {
+                    audioPlayer.pause();
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', unlockAudioEngine);
+            document.removeEventListener('touchstart', unlockAudioEngine);
+        }
+
+        document.addEventListener('click', unlockAudioEngine);
+        document.addEventListener('touchstart', unlockAudioEngine);
+
+        // Initialize Categories Dropdown Options
         function updateCategoryOptions() {
-            const currentSelected = categorySelect.value;
+            const currentCat = categorySelect.value;
             categorySelect.innerHTML = '<option value="all">כל הנושאים</option><option value="saved">⭐ מילים שמורות</option>';
-            
             const categories = [...new Set(vocabulary.map(item => item.category))];
             categories.forEach(cat => {
                 const opt = document.createElement('option');
@@ -429,29 +543,29 @@
                 opt.textContent = cat;
                 categorySelect.appendChild(opt);
             });
-
-            categorySelect.value = currentSelected;
+            categorySelect.value = currentCat;
         }
 
-        // Filter Logic
+        // Filters Application
         function applyFilters() {
             const cat = categorySelect.value;
             const search = searchInput.value.trim().toLowerCase();
 
             filteredVocab = vocabulary.filter(item => {
-                let matchCat = false;
-                if (cat === 'all') matchCat = true;
-                else if (cat === 'saved') matchCat = savedWordIds.includes(item.id);
-                else matchCat = (item.category === cat);
-
-                const matchSearch = item.hebrew.toLowerCase().includes(search) || item.arabic.toLowerCase().includes(search);
+                const isSaved = savedWords.includes(item.hebrew);
+                const matchCat = (cat === 'all') || (cat === 'saved' && isSaved) || (item.category === cat);
+                const matchSearch = item.hebrew.toLowerCase().includes(search) || 
+                                    item.arabic.toLowerCase().includes(search) ||
+                                    (item.arabicText && item.arabicText.includes(search));
                 return matchCat && matchSearch;
             });
 
-            // ערבוב אקראי של המילים בבחירת נושא/סינון/טעינה ראשונית
-            filteredVocab.sort(() => 0.5 - Math.random());
+            if (filteredVocab.length > 0) {
+                currentIndex = Math.floor(Math.random() * filteredVocab.length);
+            } else {
+                currentIndex = 0;
+            }
 
-            currentIndex = 0;
             updateFlashcard();
             renderListTable();
         }
@@ -459,7 +573,7 @@
         categorySelect.addEventListener('change', applyFilters);
         searchInput.addEventListener('input', applyFilters);
 
-        // Switch View Modes
+        // Switch Navigation View Modes
         function setMode(mode) {
             sectionFlashcards.classList.add('hidden');
             sectionQuiz.classList.add('hidden');
@@ -499,7 +613,7 @@
 
         // Card Flip
         cardContainer.addEventListener('click', (e) => {
-            if (e.target.closest('#star-btn') || e.target.closest('#speak-hebrew-btn') || e.target.closest('#speak-arabic-btn')) return;
+            if (e.target.closest('button')) return;
             card.classList.toggle('rotate-y-180');
         });
 
@@ -509,56 +623,67 @@
             if (filteredVocab.length === 0) {
                 cardHebrew.textContent = "לא נמצאו מילים";
                 cardArabic.textContent = "-";
+                if (cardArabicScript) cardArabicScript.textContent = "";
                 cardCatFront.textContent = "-";
                 cardCatBack.textContent = "-";
                 cardCounter.textContent = "0 / 0";
-                cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'הכל' : categorySelect.options[categorySelect.selectedIndex].text;
-                starBtn.classList.add('hidden');
+                cardCategoryBadge.textContent = categorySelect.value === 'all' ? 'הכל' : categorySelect.value;
+                starBtn.className = "text-slate-300 text-lg p-1";
                 return;
             }
 
-            starBtn.classList.remove('hidden');
             const current = filteredVocab[currentIndex];
             cardHebrew.textContent = current.hebrew;
             cardArabic.textContent = current.arabic;
+            if (cardArabicScript) cardArabicScript.textContent = current.arabicText || "";
             cardCatFront.textContent = current.category;
             cardCatBack.textContent = current.category;
             cardCounter.textContent = `${currentIndex + 1} / ${filteredVocab.length}`;
-            cardCategoryBadge.textContent = categorySelect.options[categorySelect.selectedIndex].text;
+            
+            let catText = categorySelect.value === 'all' ? 'כל הנושאים' : categorySelect.value;
+            if (categorySelect.value === 'saved') catText = '⭐ מילים שמורות';
+            cardCategoryBadge.textContent = catText;
 
-            // Update Star Status
-            if (savedWordIds.includes(current.id)) {
+            // Update Star Bookmark Button
+            if (savedWords.includes(current.hebrew)) {
                 starBtn.className = "text-amber-400 hover:text-amber-500 text-lg transition p-1";
             } else {
                 starBtn.className = "text-slate-300 hover:text-amber-400 text-lg transition p-1";
             }
         }
 
-        // Bookmark / Star Functionality
         starBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (!filteredVocab.length) return;
-            const currentId = filteredVocab[currentIndex].id;
+            const current = filteredVocab[currentIndex];
             
-            if (savedWordIds.includes(currentId)) {
-                savedWordIds = savedWordIds.filter(id => id !== currentId);
+            if (savedWords.includes(current.hebrew)) {
+                savedWords = savedWords.filter(w => w !== current.hebrew);
             } else {
-                savedWordIds.push(currentId);
+                savedWords.push(current.hebrew);
             }
-
-            localStorage.setItem('saved_word_ids', JSON.stringify(savedWordIds));
+            
+            localStorage.setItem('savedVocabWords', JSON.stringify(savedWords));
             updateFlashcard();
+            
+            if (categorySelect.value === 'saved') {
+                applyFilters();
+            }
         });
 
-        // Speech Buttons
-        document.getElementById('speak-hebrew-btn').addEventListener('click', (e) => {
+        speakHebrewBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (filteredVocab.length) speakText(filteredVocab[currentIndex].hebrew, 'he-IL');
+            if (filteredVocab.length) {
+                speakHebrew(filteredVocab[currentIndex].hebrew, speakHebrewBtn);
+            }
         });
 
-        document.getElementById('speak-arabic-btn').addEventListener('click', (e) => {
+        speakArabicBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (filteredVocab.length) speakText(filteredVocab[currentIndex].arabic, 'ar-SA');
+            if (filteredVocab.length) {
+                const current = filteredVocab[currentIndex];
+                speakArabic(current.arabicText || current.arabic, speakArabicBtn);
+            }
         });
 
         prevBtn.addEventListener('click', (e) => {
@@ -591,12 +716,8 @@
                     <td class="p-3.5 font-medium text-slate-800">${item.hebrew}</td>
                     <td class="p-3.5 text-teal-700 font-bold">${item.arabic}</td>
                     <td class="p-3.5"><span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2 py-0.5 rounded-md border border-teal-200/50">${item.category}</span></td>
-                    <td class="p-3.5 text-center">
-                        <button onclick="speakText('${item.arabic.replace(/'/g, "\\'")}', 'ar-SA')" class="text-slate-400 hover:text-teal-600 p-1.5 transition">
-                            <i class="fas fa-volume-high"></i>
-                        </button>
-                    </td>
                 `;
+                
                 vocabTableBody.appendChild(tr);
             });
         }
@@ -622,7 +743,6 @@
             quizQuestion.textContent = q.hebrew;
             quizProgressEl.textContent = `שאלה ${quizCurrentIndex + 1} מתוך ${quizQuestions.length}`;
 
-            // Mix distractors
             let options = [q.arabic];
             let distractors = vocabulary.filter(v => v.arabic !== q.arabic).sort(() => 0.5 - Math.random()).slice(0, 3);
             distractors.forEach(d => options.push(d.arabic));
@@ -630,36 +750,38 @@
 
             options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-right bg-slate-50 hover:bg-slate-100 border border-slate-200 p-3.5 rounded-xl text-base font-semibold text-slate-700 transition flex justify-between items-center active:scale-[0.99]";
+                btn.className = "w-full text-right bg-slate-50 hover:bg-slate-100 border border-slate-200 p-4 rounded-2xl text-base font-semibold text-slate-700 transition flex justify-between items-center active:scale-[0.99]";
                 btn.innerHTML = `<span>${opt}</span><i class="far fa-circle text-slate-300"></i>`;
-                btn.onclick = () => selectQuizAnswer(btn, opt, q.arabic);
+                btn.onclick = () => selectQuizAnswer(btn, opt, q.arabic, q.arabicText);
                 quizOptions.appendChild(btn);
             });
         }
 
-        function selectQuizAnswer(btn, chosen, correct) {
+        function selectQuizAnswer(btn, chosen, correct, correctArabicText) {
             const allBtns = quizOptions.querySelectorAll('button');
             allBtns.forEach(b => b.disabled = true);
 
+            speakArabic(correctArabicText || correct);
+
             if (chosen === correct) {
-                btn.className = "w-full text-right bg-emerald-50 border-2 border-emerald-500 p-3.5 rounded-xl text-base font-bold text-emerald-800 flex justify-between items-center";
+                btn.className = "w-full text-right bg-emerald-50 border-2 border-emerald-500 p-4 rounded-2xl text-base font-bold text-emerald-800 flex justify-between items-center";
                 btn.querySelector('i').className = "fas fa-check-circle text-emerald-600";
                 quizFeedback.textContent = "כל הכבוד! תשובה נכונה ✨";
-                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-emerald-600";
+                quizFeedback.className = "text-center font-bold text-sm sm:text-base min-h-[28px] mb-4 text-emerald-600";
                 quizScore += 10;
                 quizScoreEl.textContent = `ניקוד: ${quizScore}`;
             } else {
-                btn.className = "w-full text-right bg-rose-50 border-2 border-rose-500 p-3.5 rounded-xl text-base font-bold text-rose-800 flex justify-between items-center";
+                btn.className = "w-full text-right bg-rose-50 border-2 border-rose-500 p-4 rounded-2xl text-base font-bold text-rose-800 flex justify-between items-center";
                 btn.querySelector('i').className = "fas fa-times-circle text-rose-600";
 
                 allBtns.forEach(b => {
                     if (b.textContent.trim() === correct) {
-                        b.className = "w-full text-right bg-emerald-50 border-2 border-emerald-400 p-3.5 rounded-xl text-base font-bold text-emerald-700 flex justify-between items-center";
+                        b.className = "w-full text-right bg-emerald-50 border-2 border-emerald-400 p-4 rounded-2xl text-base font-bold text-emerald-700 flex justify-between items-center";
                     }
                 });
 
                 quizFeedback.textContent = `לא מדויק, התשובה הנכונה היא: ${correct}`;
-                quizFeedback.className = "text-center font-bold text-sm min-h-[24px] mb-4 text-rose-600";
+                quizFeedback.className = "text-center font-bold text-sm sm:text-base min-h-[28px] mb-4 text-rose-600";
             }
 
             quizNextBtn.classList.remove('hidden');
@@ -680,14 +802,14 @@
                 <div class="text-center py-6">
                     <p class="text-sm text-slate-500 mb-1">הציון הסופי שלך:</p>
                     <p class="text-5xl font-extrabold text-teal-700 mb-3">${quizScore}</p>
-                    <p class="text-xs text-slate-600">${quizScore >= 80 ? 'תוצאה מעולה! המשך כך!' : 'מומלץ לעבור שוב על הכרטיסיות ולתרגל.'}</p>
+                    <p class="text-xs sm:text-sm text-slate-600">${quizScore >= 80 ? 'תוצאה מעולה! המשך כך!' : 'מומלץ לעבור שוב על הכרטיסיות ולתרגל.'}</p>
                 </div>
             `;
             quizFeedback.textContent = '';
             quizNextBtn.classList.add('hidden');
 
             const restartBtn = document.createElement('button');
-            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 rounded-2xl shadow transition text-sm";
+            restartBtn.className = "w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 rounded-2xl shadow transition text-sm sm:text-base";
             restartBtn.textContent = "התחל מבחן חדש";
             restartBtn.onclick = initQuiz;
             quizOptions.appendChild(restartBtn);
@@ -695,78 +817,111 @@
 
         // Matching Game Logic
         function initMatchGame() {
-            selectedMatchCard = null;
-            matchedPairsCount = 0;
-            document.getElementById('match-win-msg').classList.add('hidden');
-            const grid = document.getElementById('match-grid');
-            grid.innerHTML = '';
+            matchSelectedCard = null;
+            matchMatchesFound = 0;
+            matchWinMsg.classList.add('hidden');
+            matchGrid.innerHTML = '';
 
             const pool = filteredVocab.length >= 6 ? filteredVocab : vocabulary;
-            const selected = [...pool].sort(() => 0.5 - Math.random()).slice(0, 6);
+            const selectedItems = [...pool].sort(() => 0.5 - Math.random()).slice(0, 6);
 
             let cardsData = [];
-            selected.forEach(item => {
-                cardsData.push({ id: item.id, text: item.hebrew, type: 'hebrew' });
-                cardsData.push({ id: item.id, text: item.arabic, type: 'arabic' });
+            selectedItems.forEach(item => {
+                cardsData.push({ id: item.hebrew, text: item.hebrew, type: 'hebrew', matchId: item.hebrew });
+                cardsData.push({ id: item.hebrew + '_ar', text: item.arabic, arabicText: item.arabicText, type: 'arabic', matchId: item.hebrew });
             });
 
             cardsData.sort(() => 0.5 - Math.random());
 
-            cardsData.forEach(cardData => {
-                const btn = document.createElement('button');
-                btn.className = "p-4 border-2 border-slate-200 rounded-2xl text-center font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 transition shadow-sm active:scale-95 text-sm sm:text-base flex items-center justify-center min-h-[70px]";
-                btn.textContent = cardData.text;
-                btn.dataset.id = cardData.id;
-                btn.dataset.type = cardData.type;
+            cardsData.forEach(c => {
+                const cardEl = document.createElement('button');
+                cardEl.className = "h-24 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 flex flex-col justify-center items-center text-center transition font-semibold text-slate-800 shadow-sm text-sm sm:text-base";
+                cardEl.dataset.matchId = c.matchId;
+                cardEl.dataset.type = c.type;
+                cardEl.innerHTML = `<span>${c.text}</span>`;
+                
+                if (c.arabicText) {
+                    cardEl.dataset.arabicText = c.arabicText;
+                }
 
-                btn.onclick = () => handleMatchClick(btn);
-                grid.appendChild(btn);
+                cardEl.onclick = () => handleMatchCardClick(cardEl, c);
+                matchGrid.appendChild(cardEl);
             });
         }
 
-        function handleMatchClick(btn) {
-            if (btn.classList.contains('bg-emerald-100') || btn.disabled) return;
+        function handleMatchCardClick(cardEl, cardData) {
+            if (cardEl.classList.contains('matched') || cardEl.disabled) return;
 
-            if (!selectedMatchCard) {
-                selectedMatchCard = btn;
-                btn.classList.remove('bg-slate-50', 'border-slate-200');
-                btn.classList.add('bg-teal-100', 'border-teal-500', 'text-teal-900');
-            } else if (selectedMatchCard === btn) {
-                btn.classList.remove('bg-teal-100', 'border-teal-500', 'text-teal-900');
-                btn.classList.add('bg-slate-50', 'border-slate-200');
-                selectedMatchCard = null;
+            if (cardData.type === 'arabic') {
+                speakArabic(cardData.arabicText || cardData.text);
             } else {
-                const card1 = selectedMatchCard;
-                const card2 = btn;
+                speakHebrew(cardData.text);
+            }
 
-                if (card1.dataset.id === card2.dataset.id && card1.dataset.type !== card2.dataset.type) {
-                    // Match Success
-                    [card1, card2].forEach(c => {
-                        c.className = "p-4 border-2 border-emerald-500 rounded-2xl text-center font-bold text-emerald-800 bg-emerald-100 transition shadow-sm text-sm sm:text-base flex items-center justify-center min-h-[70px]";
-                        c.disabled = true;
-                    });
-                    matchedPairsCount++;
-                    selectedMatchCard = null;
+            if (!matchSelectedCard) {
+                matchSelectedCard = { el: cardEl, data: cardData };
+                cardEl.className = "h-24 bg-teal-50 border-2 border-teal-500 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold text-teal-800 shadow-md text-sm sm:text-base scale-95 transition";
+                return;
+            }
 
-                    if (matchedPairsCount === 6) {
-                        document.getElementById('match-win-msg').classList.remove('hidden');
-                    }
-                } else {
-                    // Match Fail
-                    card2.classList.add('bg-rose-100', 'border-rose-500');
+            if (matchSelectedCard.el === cardEl) {
+                matchSelectedCard = null;
+                cardEl.className = "h-24 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-semibold text-slate-800 shadow-sm text-sm sm:text-base transition";
+                return;
+            }
+
+            if (matchSelectedCard.data.type === cardData.type) {
+                matchSelectedCard.el.className = "h-24 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-semibold text-slate-800 shadow-sm text-sm sm:text-base transition";
+                matchSelectedCard = { el: cardEl, data: cardData };
+                cardEl.className = "h-24 bg-teal-50 border-2 border-teal-500 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold text-teal-800 shadow-md text-sm sm:text-base scale-95 transition";
+                return;
+            }
+
+            if (matchSelectedCard.data.matchId === cardData.matchId) {
+                // Correct Match
+                const firstEl = matchSelectedCard.el;
+                const secondEl = cardEl;
+
+                firstEl.className = "h-24 bg-emerald-100 border-2 border-emerald-500 text-emerald-800 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold shadow-sm text-sm sm:text-base opacity-60";
+                secondEl.className = "h-24 bg-emerald-100 border-2 border-emerald-500 text-emerald-800 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold shadow-sm text-sm sm:text-base opacity-60";
+
+                firstEl.classList.add('matched');
+                secondEl.classList.add('matched');
+                firstEl.disabled = true;
+                secondEl.disabled = true;
+
+                matchSelectedCard = null;
+                matchMatchesFound++;
+
+                if (matchMatchesFound === 6) {
                     setTimeout(() => {
-                        [card1, card2].forEach(c => {
-                            c.className = "p-4 border-2 border-slate-200 rounded-2xl text-center font-bold text-slate-700 bg-slate-50 hover:bg-slate-100 transition shadow-sm active:scale-95 text-sm sm:text-base flex items-center justify-center min-h-[70px]";
-                        });
-                        selectedMatchCard = null;
-                    }, 500);
+                        matchWinMsg.classList.remove('hidden');
+                    }, 400);
                 }
+            } else {
+                // Wrong Match
+                const firstEl = matchSelectedCard.el;
+                const secondEl = cardEl;
+
+                firstEl.className = "h-24 bg-rose-100 border-2 border-rose-500 text-rose-800 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold shadow-sm text-sm sm:text-base";
+                secondEl.className = "h-24 bg-rose-100 border-2 border-rose-500 text-rose-800 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-bold shadow-sm text-sm sm:text-base";
+
+                matchSelectedCard = null;
+
+                setTimeout(() => {
+                    if (!firstEl.classList.contains('matched')) {
+                        firstEl.className = "h-24 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-semibold text-slate-800 shadow-sm text-sm sm:text-base transition";
+                    }
+                    if (!secondEl.classList.contains('matched')) {
+                        secondEl.className = "h-24 bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 flex flex-col justify-center items-center text-center font-semibold text-slate-800 shadow-sm text-sm sm:text-base transition";
+                    }
+                }, 700);
             }
         }
 
-        document.getElementById('restart-match-btn').addEventListener('click', initMatchGame);
+        restartMatchBtn.addEventListener('click', initMatchGame);
 
-        // Keyboard navigation
+        // Keyboard Navigation
         document.addEventListener('keydown', (e) => {
             if (!sectionFlashcards.classList.contains('hidden')) {
                 if (e.key === 'ArrowRight') prevBtn.click();
@@ -775,9 +930,15 @@
             }
         });
 
-        // Initialize App
-        updateCategoryOptions();
-        applyFilters();
+        // Application Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCategoryOptions();
+            applyFilters();
+
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+        });
     </script>
 </body>
 </html>
